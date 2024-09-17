@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +32,7 @@ fun SplashScreen(
     modifier: Modifier = Modifier,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
+
     Column(
         modifier =
         modifier
@@ -41,8 +43,8 @@ fun SplashScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        //CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
-        GifImage()
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
+        //GifImage()
     }
 
     LaunchedEffect(true) {

@@ -6,6 +6,10 @@ plugins {
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("dagger.hilt.android.plugin")
+
+    //firebase
+    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -97,6 +101,11 @@ dependencies {
 
     //chart
     implementation ("co.yml:ycharts:2.1.0")
+
+    //firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation(libs.firebase.auth)
 }
 
 // Allow references to generated code

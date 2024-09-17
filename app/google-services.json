@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "636891266213",
+    "project_id": "target-log",
+    "storage_bucket": "target-log.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:636891266213:android:6c01737eb135abc10b214c",
+        "android_client_info": {
+          "package_name": "com.example.targetlog"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmwjfvU_x6ytEyvo8HCm-Mbx6jVeWR7D8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,7 @@
 package com.example.targetlog.main_activity.screens.bottom_nav_profile
 
+import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,10 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.targetlog.commons.PERSONAL_SCREEN
 import com.example.targetlog.R
 import com.example.targetlog.commons.ANALYTICS_GRAPH_SCREEN
 import com.example.targetlog.commons.FRIENDS_SCREEN
+import com.example.targetlog.commons.SPLASH_SCREEN
 import com.example.targetlog.main_activity.screens.common_components.ProfileBanner
 import com.example.targetlog.main_activity.screens.common_components.SettingsCard
 import com.example.targetlog.main_activity.screens.common_components.StatusCard
@@ -28,6 +32,7 @@ import com.example.targetlog.ui.theme.Yellow900
 @Preview
 @Composable
 fun ProfileScreen(
+    viewModel:ProfileViewModel = hiltViewModel(),
     onClickNavigate:(String)->Unit={ _ -> }
 ){
 
@@ -37,8 +42,8 @@ fun ProfileScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(0.dp,innerPadding.calculateTopPadding(),0.dp,0.dp)
-                .padding(30.dp,30.dp,30.dp,0.dp)
+                .padding(0.dp, innerPadding.calculateTopPadding(), 0.dp, 0.dp)
+                .padding(30.dp, 30.dp, 30.dp, 0.dp)
         ) {
             item(){
 
@@ -82,6 +87,14 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(15.dp))
                 SettingsCard(resourcesId = R.drawable.equipment_settings, text = "Equipment/Device Settings")
+                Spacer(modifier = Modifier.height(15.dp))
+
+                SettingsCard(resourcesId = R.drawable.baseline_logout_24, text = "Log out", route = SPLASH_SCREEN,
+                    onClickNavigate = {
+                        viewModel.onLogOutButtonClick(onClickNavigate)
+
+                    }
+                )
                 Spacer(modifier = Modifier.height(15.dp))
             }
         }
