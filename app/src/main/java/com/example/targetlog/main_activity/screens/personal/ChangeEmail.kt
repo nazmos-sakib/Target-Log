@@ -96,7 +96,7 @@ fun ChangeEmailScreen(
                 trailingIcon = {
                     Icon(
                         modifier = Modifier.clickable {  },
-                        painter = painterResource(id = R.drawable.password_eye_24),
+                        painter = painterResource(id = R.drawable.password_show),
                         contentDescription = "",
                         tint = Color.White
                     )

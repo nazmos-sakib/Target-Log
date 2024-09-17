@@ -50,7 +50,7 @@ import com.example.targetlog.ui.theme.Purple40
 fun Workout_History(
     onClickGotoBluetoothScreen: (String) -> Unit = { _ -> },
     onBackClickNavigate: () -> Unit = { },
-    ) {
+) {
     Scaffold(
         topBar = {
             TopBar(
@@ -74,7 +74,7 @@ fun Workout_History(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(20.dp, innerPadding.calculateTopPadding() + 20.dp, 20.dp, 20.dp),
+                .padding(20.dp, innerPadding.calculateTopPadding() + 20.dp, 20.dp, 0.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

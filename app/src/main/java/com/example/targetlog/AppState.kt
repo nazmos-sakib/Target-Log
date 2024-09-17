@@ -2,9 +2,14 @@ package com.example.targetlog
 
 import androidx.compose.runtime.Stable
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Stable
-class AppState (val navController: NavHostController) {
+class AppState (private val _navController: NavHostController) {
+
+    val navController: NavHostController
+        get() = _navController
+
     fun popUp() {
         navController.popBackStack()
     }
