@@ -85,7 +85,8 @@ fun SignInScreen(
             //email
             CustomFrame(
                 text = "Email Address", textFieldValue = viewModel.email,
-                modifier = Modifier.height(intrinsicSize = IntrinsicSize.Min)
+                modifier = Modifier.height(intrinsicSize = IntrinsicSize.Min),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
             ) { email->
                 viewModel.updateEmail(email)
             }
@@ -200,6 +201,7 @@ fun CustomFrame(
     modifier: Modifier = Modifier,
     text:String,
     textFieldValue:String,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onValueChange: (String) -> Unit
 ){
     Text(text = text, color = Color.White, fontSize = 18.sp, modifier = Modifier.padding(0.dp,10.dp))
@@ -218,6 +220,7 @@ fun CustomFrame(
             unfocusedIndicatorColor = DarkLight
         ),
         onValueChange = {  onValueChange(it) },
+        keyboardOptions = keyboardOptions
     )
 }
 

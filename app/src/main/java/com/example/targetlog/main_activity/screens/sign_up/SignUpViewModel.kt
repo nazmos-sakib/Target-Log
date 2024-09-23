@@ -6,15 +6,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.targetlog.commons.SPLASH_SCREEN
 import com.example.targetlog.main_activity.screens.AppViewModel
+import com.example.targetlog.model.User
 import com.example.targetlog.model.service.AccountService
-import com.google.firebase.auth.FirebaseAuth
+import com.example.targetlog.model.service.FireStoreService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.InternalCoroutinesApi
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel  @Inject constructor(
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val fireStoreService: FireStoreService,
 ): AppViewModel() {
     var email by mutableStateOf("")
         private set
@@ -125,9 +127,33 @@ class SignUpViewModel  @Inject constructor(
                     updateShowWarningText(true)
                     updateShowProgressBar(false)
                 } else {
-                    // Coroutine completed successfully, no exception
-                    onClickNavigate(SPLASH_SCREEN)
-                    Log.d("SignUp->", "Coroutine completed successfully")
+                    //signup successfully, no exception
+                    //add user data to firestore "users" table
+                    val user = User(
+                       id = accountService.currentUserId,
+                        email = email,
+                        displayName = username,
+                        phoneNumber = phoneNumber,
+                        dateOfBirth = dateOfBirth,
+                        skillLevel = skillLevel,
+                        timeStamp =  com.google.firebase.Timestamp.now()
+                    )
+                    runInCoroutineBlock {
+                        accountService.updateDisplayName(username)
+                        fireStoreService.savePerson(user)
+                    }.invokeOnCompletion { updateException ->
+                        if (updateException != null) {
+                            // The coroutine was cancelled or failed
+                            updateWarningText(updateException.message.toString())
+                            updateShowWarningText(true)
+                            updateShowProgressBar(false)
+                        } else {
+                            //displayName update successful
+                            onClickNavigate(SPLASH_SCREEN)
+                            Log.d("SignUp->", "update successfully")
+                        }
+                    }
+                    Log.d("SignUp->", "signup completed successfully")
                 }
             }
             Log.d("SignUp->", "onNextButtonClick: outside coroutine")

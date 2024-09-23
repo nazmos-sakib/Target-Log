@@ -37,16 +37,18 @@ import com.example.targetlog.commons.PERSONAL_SCREEN
 import com.example.targetlog.commons.SIGN_IN_SCREEN
 import com.example.targetlog.commons.SIGN_UP_SCREEN
 import com.example.targetlog.commons.SPLASH_SCREEN
+import com.example.targetlog.commons.WORKOUT_HISTORY
 import com.example.targetlog.main_activity.screens.analytics.AnalyticScreen
 import com.example.targetlog.main_activity.screens.bluetooth.BluetoothScreen
-import com.example.targetlog.main_activity.screens.friends.AddAFriend
-import com.example.targetlog.main_activity.screens.friends.FriendProfileScreen
+import com.example.targetlog.main_activity.screens.add_friend.AddAFriend
+import com.example.targetlog.main_activity.screens.friend_profile.FriendProfileScreen
 import com.example.targetlog.main_activity.screens.friends.FriendsScreen
 import com.example.targetlog.main_activity.screens.bottom_nav_home.HomeScreen
 import com.example.targetlog.main_activity.screens.personal.ChangeDisplayNameScreen
 import com.example.targetlog.main_activity.screens.personal.ChangeEmailScreen
 import com.example.targetlog.main_activity.screens.personal.PersonalScreen
 import com.example.targetlog.main_activity.screens.bottom_nav_profile.ProfileScreen
+import com.example.targetlog.main_activity.screens.bottom_nav_training.BottomNavTrainingScreen
 import com.example.targetlog.main_activity.screens.find_my_target.FindMyTargetScreen
 import com.example.targetlog.main_activity.screens.sign_in.SignInScreen
  import com.example.targetlog.main_activity.screens.sign_up.SignUpScreen
@@ -129,10 +131,21 @@ fun NavGraphBuilder.notesGraph(appState:  AppState) {
     }
 
     composable(BOTTOM_NAV_TRAINING_SCREEN){
+        BottomNavTrainingScreen()
+        /*Workout_History(
+            onClickGotoBluetoothScreen = { route -> appState.navigate (route) },
+            onBackClickNavigate = {appState.popUp()}
+        )*/
+    }
+
+    composable(WORKOUT_HISTORY){
         //BottomNavTrainingScreen()
         Workout_History(
             onClickGotoBluetoothScreen = { route -> appState.navigate (route) },
-            onBackClickNavigate = {appState.popUp()}
+            onBackClickNavigate = {
+                appState.popUp()
+                appState.navigate(BOTTOM_NAV_PROFILE_SCREEN)
+            }
         )
     }
     composable(BLUETOOTH_SCREEN){

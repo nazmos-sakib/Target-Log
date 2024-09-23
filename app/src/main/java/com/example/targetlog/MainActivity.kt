@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.targetlog.commons.BOTTOM_NAV_TRAINING_SCREEN
 import com.example.targetlog.commons.SPLASH_SCREEN
+import com.example.targetlog.commons.WORKOUT_HISTORY
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -16,7 +17,7 @@ class MainActivity : ComponentActivity() {
         val intentResult = intent.getBooleanExtra("training_finish",false)
         setContent {
             AppEntry(startDestination = when(intentResult) {
-                true -> BOTTOM_NAV_TRAINING_SCREEN
+                true -> WORKOUT_HISTORY//BOTTOM_NAV_TRAINING_SCREEN
                 false -> SPLASH_SCREEN
             })
         }

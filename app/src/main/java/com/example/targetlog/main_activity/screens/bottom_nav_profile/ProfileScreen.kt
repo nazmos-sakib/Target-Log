@@ -1,7 +1,6 @@
 package com.example.targetlog.main_activity.screens.bottom_nav_profile
 
-import android.util.Log
-import androidx.compose.foundation.clickable
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +22,7 @@ import com.example.targetlog.R
 import com.example.targetlog.commons.ANALYTICS_GRAPH_SCREEN
 import com.example.targetlog.commons.FRIENDS_SCREEN
 import com.example.targetlog.commons.SPLASH_SCREEN
+import com.example.targetlog.commons.WORKOUT_HISTORY
 import com.example.targetlog.main_activity.screens.common_components.ProfileBanner
 import com.example.targetlog.main_activity.screens.common_components.SettingsCard
 import com.example.targetlog.main_activity.screens.common_components.StatusCard
@@ -43,7 +45,7 @@ fun ProfileScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(0.dp, innerPadding.calculateTopPadding(), 0.dp, 0.dp)
-                .padding(30.dp, 30.dp, 30.dp, 0.dp)
+                .padding(30.dp, 10.dp, 30.dp, 0.dp)
         ) {
             item(){
 
@@ -52,7 +54,13 @@ fun ProfileScreen(
                         .fillMaxWidth() ,
                     contentAlignment = Alignment.Center
                 ) {
-                    ProfileBanner()
+                    val currentUser by viewModel.user.collectAsState()
+                    currentUser?.let {
+                        ProfileBanner(
+                            email = it.email,
+                            name = it.displayName, isProfilePicEditable = true
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(30.dp))
@@ -77,7 +85,7 @@ fun ProfileScreen(
                 SettingsCard(resourcesId = R.drawable.analytics_2, text = "Shooting Analytics",route = ANALYTICS_GRAPH_SCREEN, onClickNavigate = onClickNavigate)
 
                 Spacer(modifier = Modifier.height(15.dp))
-                SettingsCard(resourcesId = R.drawable.working_history, text = "Workout History")
+                SettingsCard(resourcesId = R.drawable.working_history, text = "Workout History",route = WORKOUT_HISTORY, onClickNavigate = onClickNavigate)
 
                 Spacer(modifier = Modifier.height(15.dp))
                 SettingsCard(resourcesId = R.drawable.baseline_search_24, text = "Find My Board")

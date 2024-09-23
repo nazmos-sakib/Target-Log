@@ -1,6 +1,8 @@
 package com.example.targetlog.model
 
-data class User (
+import com.google.firebase.Timestamp
+
+data class User(
     val id: String = "",
     val email: String = "",
     val provider: String = "",
@@ -9,6 +11,6 @@ data class User (
     val dateOfBirth: String = "",
     val skillLevel: String = "",
     val profilePicUrl: String = "",
-    val timeStrap: String = "",
-    val isAnonymous: Boolean = true
+    val timeStamp: Timestamp? = null,
+    val isAnonymous: Boolean = false
 )

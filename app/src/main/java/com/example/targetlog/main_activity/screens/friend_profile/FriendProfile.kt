@@ -1,4 +1,4 @@
-package com.example.targetlog.main_activity.screens.friends
+package com.example.targetlog.main_activity.screens.friend_profile
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.targetlog.commons.getTopLineShape
 import com.example.targetlog.main_activity.screens.common_components.DailyActivity
-import com.example.targetlog.main_activity.screens.common_components.ProfileBanner
+import com.example.targetlog.main_activity.screens.common_components.ProfileBannerPreview
 import com.example.targetlog.main_activity.screens.common_components.StatusCard
 import com.example.targetlog.main_activity.screens.common_components.TopBar
 import com.example.targetlog.main_activity.screens.personal.PersonalScreenViewModel
@@ -57,7 +57,7 @@ fun FriendProfileScreen(
                         .fillMaxWidth() ,
                     contentAlignment = Alignment.Center
                 ) {
-                    ProfileBanner()
+                    ProfileBannerPreview()
                 }
 
                 Spacer(modifier = Modifier.height(30.dp))
