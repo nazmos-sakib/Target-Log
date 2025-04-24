@@ -64,7 +64,7 @@ fun PersonalScreen(
                     unfocusedIndicatorColor = DarkLight
                 ),
                 readOnly = true,
-                onValueChange = { username -> viewModel.updateUsername(username) },
+                onValueChange = { /*username -> viewModel.updateUsername(username)*/ },
                 trailingIcon = {
                     Icon(
                         modifier = Modifier.clickable { onClickNavigate(CHANGE_DISPLAY_NAME_SCREEN) },
@@ -75,14 +75,13 @@ fun PersonalScreen(
                 }
             )
 
-            val s1:String = "example@email.com"
             Spacer(modifier = Modifier.height(20.dp))
             Text(text = "Email",color = Color.White)
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(0.dp, 0.dp, 0.dp, 15.dp),
-                value = s1,
+                value = viewModel.email,
                 shape = RoundedCornerShape(8.dp),
                 colors = TextFieldDefaults.colors().copy(
                     focusedContainerColor = DarkLight,

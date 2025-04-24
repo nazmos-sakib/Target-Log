@@ -12,5 +12,5 @@ data class User(
     val skillLevel: String = "",
     val profilePicUrl: String = "",
     val timeStamp: Timestamp? = null,
-    val isAnonymous: Boolean = false
+    val anonymous: Boolean = false
 )

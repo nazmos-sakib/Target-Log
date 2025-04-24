@@ -1,5 +1,6 @@
 package com.example.targetlog.model.service.impl
 
+import android.util.Log
 import com.example.targetlog.model.FriendList
 import com.example.targetlog.model.User
 import com.example.targetlog.model.service.FireStoreService
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import okhttp3.internal.wait
 import javax.inject.Inject
+import kotlin.math.log
 
 class FireStoreServiceImp @Inject constructor():FireStoreService {
     private val db:FirebaseFirestore = Firebase.firestore
@@ -34,6 +36,7 @@ class FireStoreServiceImp @Inject constructor():FireStoreService {
             val person = document.toObject (User::class.java)
             person?.let {
                 if (it.id == currentUserId){
+                    Log.d("TAG", "retrieveUserByUserId: ${it.toString()}")
                     return person
                 }
             }

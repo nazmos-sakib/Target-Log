@@ -26,7 +26,6 @@ class FriendsViewModel   @Inject constructor(
     private val _friendsList = MutableStateFlow<List<User>>(emptyList())  // Store the list of users
     val friendsList: StateFlow<List<User>> get() = _friendsList  // Expose the list as a StateFlow
 
-    //val contentResolver: ContentResolver = TODO()
 
     init {
         fetchFriends()
@@ -49,13 +48,5 @@ class FriendsViewModel   @Inject constructor(
         }
     }
 
-    /*private fun query(
-        uri: Uri, // the provider Uri
-        projection: Array<String>, // the list of the columns to project
-        selection: String? = null,  // the select clause (the WHERE)
-        selectionArgs: Array<String>? = null, // the selection arguments (the WHERE arguments to replace)
-        sort: String? = null // Definition of sort, offset & limit
-    ): Cursor? {
-        //return contentResolver.query(uri, projection, selection, selectionArgs, sort)
-    }*/
+
 }

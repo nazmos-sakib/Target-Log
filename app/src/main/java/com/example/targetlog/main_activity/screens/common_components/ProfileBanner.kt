@@ -103,7 +103,7 @@ fun ProfileBanner(
                         fontSize = 16.sp,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    StreakIndicator(19)
+                    StreakIndicator(19,11.sp)
                 }
             }
         }
