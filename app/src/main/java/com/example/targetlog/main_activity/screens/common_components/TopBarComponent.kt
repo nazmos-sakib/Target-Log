@@ -1,5 +1,6 @@
 package com.example.targetlog.main_activity.screens.common_components
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,13 +16,19 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.currentCompositionLocalContext
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.targetlog.commons.BLUETOOTH_SCREEN
 import com.example.targetlog.R
 import com.example.targetlog.commons.FIND_MY_TARGET_SCREEN
@@ -31,11 +38,26 @@ import com.example.targetlog.ui.theme.TopBarBlue
 //@Preview
 @Composable
 fun TopBar(
+    viewModel:TopBarViewModel = hiltViewModel(),
     title:String,
     backNavigate:Boolean?=null,
     onBackClickNavigate:( )->Unit={ },
     onBluetoothButtonClick:(String )->Unit={ _ -> }
 ){
+
+    val isConnected by viewModel.isConnected.collectAsState()
+    val isConnectedState by viewModel.isConnectedState.collectAsState()
+
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = isConnected) {
+        if (isConnected  ) {
+            Toast.makeText(context,"You are connected", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context,"disconnected", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -81,10 +103,20 @@ fun TopBar(
             ) {
                 Text(text = "R1",fontWeight= FontWeight.Bold)
                 Icon(
-                    painter = painterResource(id = R.drawable.baseline_bluetooth_24),
+                    painter = painterResource(
+                            id = when(isConnected){
+                        true -> R.drawable.baseline_bluetooth_24
+                        false -> R.drawable.baseline_bluetooth_disabled_24
+                    }
+                ),
                     contentDescription = "bluetooth")
                 Icon(
-                    painter = painterResource(id = R.drawable.baseline_check_24),
+                    painter = painterResource(
+                        id = when(isConnectedState){
+                            true -> R.drawable.baseline_check_24
+                            false -> R.drawable.baseline_close_24
+                        }
+                    ),
                     contentDescription = "bluetooth")
             }
         }
@@ -96,7 +128,7 @@ fun TopBar(
 fun TopBarPreview(
     title:String="Top Bar",
     backNavigate:Boolean?=null,
-    onBackNavigate:( )->Unit={ },
+    onBackClickNavigate:( )->Unit={ },
     onBluetoothButtonClick:(String )->Unit={ _ -> }
 ){
     Row(

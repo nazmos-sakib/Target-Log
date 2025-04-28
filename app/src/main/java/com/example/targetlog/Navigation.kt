@@ -100,7 +100,7 @@ fun AppEntry(
                     startDestination = startDestination,
                     modifier = Modifier.padding(innerPadding)
                 ) {
-                    notesGraph(appState)
+                    nodesGraph(appState)
                 }
             }
         }
@@ -119,7 +119,7 @@ fun rememberAppState(navController: NavHostController = rememberNavController())
 
 
 //extended function of navHost
-fun NavGraphBuilder.notesGraph(appState:  AppState) {
+fun NavGraphBuilder.nodesGraph(appState:  AppState) {
     composable(SPLASH_SCREEN) {
         //SplashScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
         SplashScreen(openAndPopUp = { route, popUp -> appState.clearAndNavigate(route) })
@@ -131,7 +131,7 @@ fun NavGraphBuilder.notesGraph(appState:  AppState) {
     }
 
     composable(BOTTOM_NAV_TRAINING_SCREEN){
-        BottomNavTrainingScreen()
+        BottomNavTrainingScreen(onClickGotoBluetoothScreen = { route -> appState.navigate (route) })
         /*Workout_History(
             onClickGotoBluetoothScreen = { route -> appState.navigate (route) },
             onBackClickNavigate = {appState.popUp()}

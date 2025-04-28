@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.targetlog.R
 import com.example.targetlog.main_activity.screens.common_components.TopBar
+import com.example.targetlog.main_activity.screens.common_components.TopBarPreview
 import com.example.targetlog.ui.theme.GreenBackground103
 import com.example.targetlog.ui.theme.GreenLight
 import com.example.targetlog.ui.theme.Purple40

@@ -26,7 +26,7 @@ import com.example.targetlog.R
 import com.example.targetlog.ui.theme.Black4B
 import com.example.targetlog.ui.theme.GreenLight
 
-@Preview
+//@Preview
 @Composable
 fun WallBallTrainingButton(
 ){
