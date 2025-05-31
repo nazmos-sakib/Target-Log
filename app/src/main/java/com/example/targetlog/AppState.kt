@@ -15,7 +15,10 @@ class AppState (private val _navController: NavHostController) {
     }
 
     fun navigate(route: String) {
-        navController.navigate(route) { launchSingleTop = true }
+        navController.navigate(route) {
+            launchSingleTop = true
+            restoreState = true
+        }
     }
 
     fun navigateAndPopUp(route: String, popUp: String) {

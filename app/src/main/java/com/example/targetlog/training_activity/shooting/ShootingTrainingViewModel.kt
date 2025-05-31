@@ -5,6 +5,10 @@ import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.viewModelScope
+import co.yml.charts.common.extensions.isNotNull
+import com.example.targetlog.commons.getCombinedDateTimeAsLong
+import com.example.targetlog.data.db.Session
+import com.example.targetlog.db.repository.SessionRepository
 import com.example.targetlog.domain.BluetoothController
 import com.example.targetlog.domain.BluetoothDeviceDomain
 import com.example.targetlog.domain.BluetoothMessage
@@ -27,6 +31,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 import kotlin.math.log
 
@@ -35,15 +40,17 @@ import kotlin.math.log
 @HiltViewModel
 class ShootingTrainingViewModel @Inject constructor(
     private val bluetoothController: BluetoothController,
-): AppViewModel() {
-    private val TAG:String = "ShootingTrainingViewModel->"
+    private val sessionRepository: SessionRepository
+) : AppViewModel() {
+    private val TAG: String = "ShootingTrainingViewModel->"
 
     val isConnected: StateFlow<Boolean> = bluetoothController.isConnected
 
 
     private val _state = MutableStateFlow(ShootingSessionUiState())
-    val state : StateFlow<ShootingSessionUiState>
+    val state: StateFlow<ShootingSessionUiState>
         get() = _state
+
     /*
     val state = combine(
         _state,
@@ -59,72 +66,115 @@ class ShootingTrainingViewModel @Inject constructor(
 */
     init {
         //init observers active bluetooth connection the ESP
-        bluetoothController.isConnected.onEach { isConnected->
-            _state.update { state->
+        bluetoothController.isConnected.onEach { isConnected ->
+            _state.update { state ->
                 state.copy(
                     isBluetoothConnected = isConnected,
-                ) }
+                )
+            }
         }.launchIn(viewModelScope)
 
         //error
-        bluetoothController.errors.onEach { error->
-            _state.update {  it.copy(  errMessage = error ) }
+        bluetoothController.errors.onEach { error ->
+            _state.update { it.copy(errMessage = error) }
         }.launchIn(viewModelScope)
 
         //continuously observe for session start/fetch data from ESP
+        //first time call startAWorkoutSession() that init sessionID
+        //if session stared and it is not on pause then reactive JOB that-
+        //fetch data from ESP else close the JOB
         viewModelScope.launch {
             state
                 .map { it.isSessionStarted && !it.isTrainingOnPause }
                 .distinctUntilChanged()
                 .collect { canStart ->
                     if (canStart) {
-                        startAWorkoutSession()
+                        state.value.sessionId?.let {
+                            reActiveSessionDataCollectionJob()
+                        }?: run{
+                            startAWorkoutSession()
+                        }
                     } else {
-                        endWorkoutSession()
+                        closeActiveSessionDataCollectionJob()
                     }
                 }
         }
     }
-    private var workoutSessionJob : Job?  = null
 
-    private fun startAWorkoutSession(){
-        Log.d(TAG, "startAWorkoutSession: ")
-        workoutSessionJob = bluetoothController.startAWorkoutSession().listen() //call the extension function
+    private var workoutSessionJob: Job? = null
+
+    private fun startAWorkoutSession() {
+        _state.update {
+            it.copy(
+                sessionId = getCombinedDateTimeAsLong(Date())
+            )
+        }
+        Log.d(TAG, "startAWorkoutSession: Session-ID->${state.value.sessionId}")
+        workoutSessionJob =
+            bluetoothController.startAWorkoutSession().listen() //call the extension function
+    }
+
+    private fun reActiveSessionDataCollectionJob() {
+        Log.d(TAG, "reActiveSessionDataCollectionJob: Session-ID->${state.value.sessionId}")
+        workoutSessionJob =
+            bluetoothController.startAWorkoutSession().listen() //call the extension function
+
+    }
+    fun closeActiveSessionDataCollectionJob() {
+        workoutSessionJob?.cancel()
     }
 
     private fun endWorkoutSession() {
         Log.d(TAG, "endWorkoutSession: triggered")
+        _state.update {
+            it.copy(
+                messages = emptyList(),
+                lastMessage = "00",
+                sessionId = null
+            )
+        }
         workoutSessionJob?.cancel()
     }
 
-        private fun Flow<ConnectionResult>.listen(): Job {
-        return onEach { result->
-            when(result){
-                is ConnectionResult.ConnectionEstablished ->{
+    private fun Flow<ConnectionResult>.listen(): Job {
+        return onEach { result ->
+            when (result) {
+                is ConnectionResult.ConnectionEstablished -> {
                 }
 
-                is ConnectionResult.TransferSucceeded ->{
+                is ConnectionResult.TransferSucceeded -> {
+                    //update DataBase
+                    _state.value.sessionId?.let { id->
+                        sessionRepository.insert(
+                            trainingHand = _state.value.trainingHand,
+                            sessionID = id,
+                            message = result.message
+                        )
+                    }
+                    //update UI
                     _state.update {
                         it.copy(
-                            messages = it.messages +  result.message ,
+                            messages = it.messages + result.message,
                             lastMessage = result.message.message
                         )
                     }
-                    Log.d(TAG, "listen: data received-"+result.message.message)
+                    Log.d(TAG, "listen: data received-" + result.message.message)
+                    Log.d(TAG, "listen: total message size: ${state.value.messages.size}" )
                 }
 
                 is ConnectionResult.Error -> {
 
                 }
             }
-        }.catch { throwable->
+        }.catch { throwable ->
             bluetoothController.closeConnection()
-            Log.d(TAG,"workout session error:"+throwable.message)
+            Log.d(TAG, "workout session error:" + throwable.message)
         }.launchIn(viewModelScope)
     }
+
     fun updateBottomSheetScaffold(
         scaffoldState: BottomSheetScaffoldState
-    ){
+    ) {
         _state.update {
             it.copy(
                 scaffoldState = scaffoldState
@@ -147,5 +197,13 @@ class ShootingTrainingViewModel @Inject constructor(
 
     fun pauseTraining() {
         _state.update { it.copy(isTrainingOnPause = true) }
+    }
+
+    fun updateTrainingHand(value: String) {
+        _state.update { state ->
+            state.copy(
+                trainingHand = value
+            )
+        }
     }
 }

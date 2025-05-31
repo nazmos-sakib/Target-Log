@@ -22,7 +22,7 @@ import com.example.targetlog.R
 import com.example.targetlog.commons.ANALYTICS_GRAPH_SCREEN
 import com.example.targetlog.commons.FRIENDS_SCREEN
 import com.example.targetlog.commons.SPLASH_SCREEN
-import com.example.targetlog.commons.WORKOUT_HISTORY
+import com.example.targetlog.commons.WORKOUT_HISTORY_SCREEN
 import com.example.targetlog.main_activity.screens.common_components.ProfileBanner
 import com.example.targetlog.main_activity.screens.common_components.SettingsCard
 import com.example.targetlog.main_activity.screens.common_components.StatusCard
@@ -85,7 +85,7 @@ fun ProfileScreen(
                 SettingsCard(resourcesId = R.drawable.analytics_2, text = "Shooting Analytics",route = ANALYTICS_GRAPH_SCREEN, onClickNavigate = onClickNavigate)
 
                 Spacer(modifier = Modifier.height(15.dp))
-                SettingsCard(resourcesId = R.drawable.working_history, text = "Workout History",route = WORKOUT_HISTORY, onClickNavigate = onClickNavigate)
+                SettingsCard(resourcesId = R.drawable.working_history, text = "Workout History",route = WORKOUT_HISTORY_SCREEN, onClickNavigate = onClickNavigate)
 
                 Spacer(modifier = Modifier.height(15.dp))
                 SettingsCard(resourcesId = R.drawable.baseline_search_24, text = "Find My Board")

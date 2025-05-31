@@ -19,21 +19,32 @@ import com.example.targetlog.ui.theme.GreenLight
 
 @Preview
 @Composable
-fun DateBoxButton(){
+fun DateBoxButtonPreview(){
+    DateBoxButton(
+        date = "31",
+        month = "JAN"
+    )
+}
+
+@Composable
+fun DateBoxButton(
+    date:String,
+    month:String,
+){
     Box(
         modifier = Modifier.size(50.dp).border(2.dp, GreenLight ,RoundedCornerShape(8.dp)),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "31",
+                text = date,
                 color = Color.White,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "JAN",
+                text = month,
                 color = Color.White,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center

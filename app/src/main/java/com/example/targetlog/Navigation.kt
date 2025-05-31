@@ -1,5 +1,7 @@
 package com.example.targetlog
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -15,12 +17,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+
+import androidx.navigation.compose.NavHost
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.targetlog.commons.ACCOUNT_CENTER_SCREEN
 import com.example.targetlog.commons.ADD_FRIENDS_SCREEN
 import com.example.targetlog.commons.ANALYTICS_GRAPH_SCREEN
@@ -30,14 +39,20 @@ import com.example.targetlog.commons.BOTTOM_NAV_PROFILE_SCREEN
 import com.example.targetlog.commons.BOTTOM_NAV_TRAINING_SCREEN
 import com.example.targetlog.commons.CHANGE_DISPLAY_NAME_SCREEN
 import com.example.targetlog.commons.CHANGE_EMAIL_SCREEN
+import com.example.targetlog.commons.FAKE_SCREEN
 import com.example.targetlog.commons.FIND_MY_TARGET_SCREEN
 import com.example.targetlog.commons.FRIENDS_PROFILE_SCREEN
 import com.example.targetlog.commons.FRIENDS_SCREEN
 import com.example.targetlog.commons.PERSONAL_SCREEN
+import com.example.targetlog.commons.SESSION_DEFAULT_ID
+import com.example.targetlog.commons.SESSION_ID
+import com.example.targetlog.commons.SESSION_ID_ARG
 import com.example.targetlog.commons.SIGN_IN_SCREEN
 import com.example.targetlog.commons.SIGN_UP_SCREEN
 import com.example.targetlog.commons.SPLASH_SCREEN
-import com.example.targetlog.commons.WORKOUT_HISTORY
+import com.example.targetlog.commons.WORKOUT_HISTORY_SCREEN
+import com.example.targetlog.commons.WORKOUT_HISTORY_START_DESTINATION_SCREEN
+import com.example.targetlog.data.persistent.SessionManager
 import com.example.targetlog.main_activity.screens.analytics.AnalyticScreen
 import com.example.targetlog.main_activity.screens.bluetooth.BluetoothScreen
 import com.example.targetlog.main_activity.screens.add_friend.AddAFriend
@@ -61,6 +76,7 @@ fun AppEntry(
     startDestination:String
 ){
 
+    Log.d("Navigation", "AppEntry: $startDestination")
     TargetLogTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
 
@@ -75,7 +91,7 @@ fun AppEntry(
                     }
                     LaunchedEffect(navBackStackEntry) {
                         val currentRoue = navBackStackEntry?.destination?.route
-                        // do something with currentRoute
+                        //Log.d("Navigation", "route: $currentRoue")
                         if (currentRoue != null) {
                             showBottomSheet = !(currentRoue.equals(SPLASH_SCREEN) || currentRoue.equals(SIGN_IN_SCREEN) || currentRoue.equals(SIGN_UP_SCREEN))
                         }
@@ -100,7 +116,7 @@ fun AppEntry(
                     startDestination = startDestination,
                     modifier = Modifier.padding(innerPadding)
                 ) {
-                    nodesGraph(appState)
+                    screenGraph(appState)
                 }
             }
         }
@@ -119,7 +135,7 @@ fun rememberAppState(navController: NavHostController = rememberNavController())
 
 
 //extended function of navHost
-fun NavGraphBuilder.nodesGraph(appState:  AppState) {
+fun NavGraphBuilder.screenGraph(appState:  AppState) {
     composable(SPLASH_SCREEN) {
         //SplashScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
         SplashScreen(openAndPopUp = { route, popUp -> appState.clearAndNavigate(route) })
@@ -138,10 +154,30 @@ fun NavGraphBuilder.nodesGraph(appState:  AppState) {
         )*/
     }
 
-    composable(WORKOUT_HISTORY){
-        //BottomNavTrainingScreen()
+    //Important Note
+    //startDestination only supports static routes —
+    //it cannot parse arguments or query parameters. This is a known limitation.
+    composable(WORKOUT_HISTORY_START_DESTINATION_SCREEN){
+        appState.clearAndNavigate("$WORKOUT_HISTORY_SCREEN?$SESSION_ID=${SessionManager.sessionId}")
+    }
+
+    composable(
+        //route = "$WORKOUT_HISTORY?sessionId={sessionId}",
+        route = "$WORKOUT_HISTORY_SCREEN$SESSION_ID_ARG",
+        arguments = listOf(
+            navArgument(SESSION_ID) {
+                type = NavType.StringType
+                defaultValue = SESSION_DEFAULT_ID  // Default to empty string if not provided
+            }
+        )
+    ) { backStackEntry ->
+        Log.d("Navigation", "nodesGraph:route ${backStackEntry.destination.route}")
+        val sessionId = backStackEntry.arguments?.getString(SESSION_ID) ?: SESSION_DEFAULT_ID
+        //val sessionId = backStackEntry.arguments?.getString(SESSION_ID) ?: SESSION_ID_ARG
+        Log.d("Navigation", "WORKOUT_HISTORY:session ID: $sessionId")
         Workout_History(
-            onClickGotoBluetoothScreen = { route -> appState.navigate (route) },
+            sessionId = sessionId.toLong(),
+            onClickGotoBluetoothScreen = { route -> appState.navigate(route) },
             onBackClickNavigate = {
                 appState.popUp()
                 appState.navigate(BOTTOM_NAV_PROFILE_SCREEN)

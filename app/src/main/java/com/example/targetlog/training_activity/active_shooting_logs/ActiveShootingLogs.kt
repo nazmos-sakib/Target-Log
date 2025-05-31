@@ -51,7 +51,7 @@ fun ActiveShootingLogs(
 
     val sortedMessages = remember { mutableStateListOf<BluetoothMessage>() }
     LaunchedEffect(key1 = messages) {
-        Log.d("Terminal", "OnASessionScreen: .message changed")
+        Log.d("ActiveShootingLogs", "OnASessionScreen: .message changed")
 
         // Clear and update the contents of the mutableStateListOf
         sortedMessages.clear()

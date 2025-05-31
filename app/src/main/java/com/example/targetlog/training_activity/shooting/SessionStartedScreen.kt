@@ -65,12 +65,14 @@ fun SessionStartedScreen(
     modifier: Modifier = Modifier,
     isTrainingOnPause: Boolean = false,
     lastMessage: String? = "",
+    trainingHand: String,
+    onTrainingHandChange: (String)->Unit = {},
     bottomSheetClickable: ()->Unit = {},
 ) {
 
     //calculate session time
     //stop/resume when training is pause
-    var seconds by remember { mutableIntStateOf(0) }
+    var seconds by remember { mutableIntStateOf(-1) }
     LaunchedEffect(isTrainingOnPause) {
         while (!isTrainingOnPause) {
             delay(1000L)
@@ -145,9 +147,9 @@ fun SessionStartedScreen(
                     Text(text = "Throw Hand:", color = Color.White, modifier = Modifier)
 
                     //drop box
-                    var trainingHand by remember {
+                    /*var trainingHand by remember {
                         mutableStateOf("Right")
-                    }
+                    }*/
 
                     Text(
                         text = trainingHand,
@@ -155,10 +157,10 @@ fun SessionStartedScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                     )
-                    LeftRightDropdownMenu { trainingHand = it }
+                    LeftRightDropdownMenu { onTrainingHandChange(it)  }
                 }
 
-                //bottom sheet layout
+                //bottom sheet layout show/hide
                 Image(
                     modifier = Modifier.clickable { bottomSheetClickable() },
                     painter = painterResource(id = R.drawable.shoot_details),

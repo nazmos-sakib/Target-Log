@@ -27,7 +27,10 @@ fun DailyActivity(){
             horizontalArrangement  = Arrangement.Start,
             verticalAlignment  = Alignment.CenterVertically,
         ) {
-            DateBoxButton()
+            DateBoxButton(
+                date = "31",
+                month = "JAN"
+            )
             Column(
                 modifier = Modifier.padding(10.dp),
                 verticalArrangement = Arrangement.SpaceEvenly,

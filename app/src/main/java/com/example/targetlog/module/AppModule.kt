@@ -1,9 +1,13 @@
 package com.example.targetlog.module
 
 import android.content.Context
+import androidx.room.Room
 //import androidx.room.Room
 import com.example.targetlog.commons.DB_NAME
 import com.example.targetlog.data.AndroidBluetoothController
+import com.example.targetlog.data.db.repository.SessionRepositoryImpl
+import com.example.targetlog.db.SessionDataBase
+import com.example.targetlog.db.repository.SessionRepository
 import com.example.targetlog.domain.BluetoothController
 import dagger.Module
 import dagger.Provides
@@ -29,7 +33,7 @@ object AppModule {
         fun provideBluetoothControllerForESP(@ApplicationContext context: Context): BluetoothControllerForESP {
             return AndroidBluetoothControllerForESP(context)
         }
-
+*/
         @Provides
         @Singleton
         fun provideSessionDatabase(@ApplicationContext context: Context):  SessionDataBase {
@@ -44,5 +48,5 @@ object AppModule {
         @Singleton
         fun providesSessionRepository(db:SessionDataBase): SessionRepository {
             return SessionRepositoryImpl(db)
-        }*/
+        }
 }

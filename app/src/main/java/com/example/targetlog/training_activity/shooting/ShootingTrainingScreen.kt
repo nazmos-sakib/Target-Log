@@ -72,8 +72,11 @@ fun ShootingTrainingScreen(
                 blueText = "Continue Session",
                 onNegativeButtonClick = { isDialogShown = false },
                 onPositiveButtonClick = {
+                    viewModel.closeActiveSessionDataCollectionJob()
+                    Log.d("Training Screen", "session ends with ID:${state.sessionId} ")
                     Intent(context, MainActivity::class.java).also {
                         it.putExtra("training_finish", true)
+                        it.putExtra("session_id", state.sessionId)
                         it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         context.startActivity(it)
                     }
@@ -130,6 +133,8 @@ fun ShootingTrainingScreen(
                                     SessionStartedScreen(
                                         isTrainingOnPause = state.isTrainingOnPause,
                                         lastMessage = state.lastMessage,
+                                        trainingHand = state.trainingHand,
+                                        onTrainingHandChange =  viewModel::updateTrainingHand ,
                                         bottomSheetClickable = { scope.launch { scaffoldState.bottomSheetState.expand() } }
                                     )
 
@@ -151,7 +156,7 @@ fun ShootingTrainingScreen(
                                                 viewModel.startTraining()
                                             },
                                             onEndClick = {
-                                                viewModel.endSession()
+                                                //viewModel.endSession()
                                                 isDialogShown = true
                                             }
                                         )

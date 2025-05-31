@@ -14,4 +14,6 @@ data class ShootingSessionUiState   constructor(
     val isSessionStarted:Boolean = false,
     val isTrainingOnPause:Boolean = false,
     val errMessage:String? = null,
+    val sessionId: Long? = null,
+    val trainingHand: String = "Right",
 )

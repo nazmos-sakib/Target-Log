@@ -1,5 +1,7 @@
 package com.example.targetlog.main_activity.screens.workout_history
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +21,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,17 +45,40 @@ import com.example.targetlog.main_activity.screens.common_components.TopBarPrevi
 import com.example.targetlog.ui.theme.GreenBackground103
 import com.example.targetlog.ui.theme.GreenLight
 import com.example.targetlog.ui.theme.Purple40
+import kotlin.math.log
 
+
+@Preview(
+    name = "Light Mode",  // Shows a default background
+    widthDp = 500,  // Sets preview width in DP
+    heightDp = 800,  // Sets preview height in DP
+    backgroundColor = 0x00090808,  // Background color (ARGB)
+    showSystemUi = false,  // Hides system UI (status bar, etc.)
+    device = "id:pixel_8_pro", showBackground = true  // Uses a specific device profile
+)
+@Composable
+fun WorkOutPreview(){
+    Workout_History()
+}
 @OptIn(ExperimentalFoundationApi::class)
-@Preview
 @Composable
 fun Workout_History(
+    sessionId: Long? = null,
     onClickGotoBluetoothScreen: (String) -> Unit = { _ -> },
     onBackClickNavigate: () -> Unit = { },
 ) {
+
+    //Intercept the back gesture (including system back press and swipe gesture),
+    // and navigate to a specific route
+    // if this is the start destination.
+    BackHandler {
+        // Navigate manually to the screen you want instead of exiting
+        onBackClickNavigate()
+    }
+    Log.d( "Workout_History: ","sessionID:$sessionId?.",)
     Scaffold(
         topBar = {
-            TopBar(
+            TopBar(  //TODO
                 title = "SHOOTING FREESTYLE",
                 onBluetoothButtonClick = onClickGotoBluetoothScreen,
                 backNavigate  = true,
@@ -153,11 +177,23 @@ fun Workout_History(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 //tab
-                LaunchedEffect(selectedTabIndex) {
+                /*LaunchedEffect(selectedTabIndex) {
                     pagerState.animateScrollToPage(selectedTabIndex)
                 }
                 LaunchedEffect(pagerState.currentPage) {
                     selectedTabIndex = pagerState.currentPage
+                }*/
+
+                LaunchedEffect(selectedTabIndex) {
+                    if (pagerState.currentPage != selectedTabIndex) {
+                        pagerState.animateScrollToPage(selectedTabIndex)
+                    }
+                }
+
+                LaunchedEffect(pagerState.currentPage) {
+                    if (selectedTabIndex != pagerState.currentPage) {
+                        selectedTabIndex = pagerState.currentPage
+                    }
                 }
 
                 val unSelectedButtonColor = ButtonColors(
@@ -224,13 +260,17 @@ fun Workout_History(
                         .fillMaxSize(),
                     userScrollEnabled = false
                 ) { page ->
-                    when (page) {
-                        1 -> {
-                            HistoryByCalender(Modifier.fillMaxSize())
-                        }
+                    sessionId?.let {id ->
+                        when (page) {
+                            1 -> {
+                                HistoryByCalender(Modifier.fillMaxSize())
+                            }
 
-                        0 -> {
-                            HistoryByList()
+                            0 -> {
+                                HistoryByList(
+                                    sessionId = id
+                                )
+                            }
                         }
                     }
 
