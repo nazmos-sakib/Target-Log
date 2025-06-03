@@ -2,6 +2,7 @@ package com.example.targetlog.main_activity.screens.workout_history
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,20 +16,31 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,12 +51,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.targetlog.R
 import com.example.targetlog.main_activity.screens.common_components.TopBar
 import com.example.targetlog.main_activity.screens.common_components.TopBarPreview
 import com.example.targetlog.ui.theme.GreenBackground103
 import com.example.targetlog.ui.theme.GreenLight
 import com.example.targetlog.ui.theme.Purple40
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import kotlin.math.log
 
 
@@ -64,6 +79,7 @@ fun WorkOutPreview(){
 @Composable
 fun Workout_History(
     sessionId: Long? = null,
+    viewModel: WorkoutHistoryModelView = hiltViewModel(),
     onClickGotoBluetoothScreen: (String) -> Unit = { _ -> },
     onBackClickNavigate: () -> Unit = { },
 ) {
@@ -75,7 +91,21 @@ fun Workout_History(
         // Navigate manually to the screen you want instead of exiting
         onBackClickNavigate()
     }
-    Log.d( "Workout_History: ","sessionID:$sessionId?.",)
+    val coroutineScope = rememberCoroutineScope()
+
+    val sessionDetails by viewModel.sessionDetails.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.initialize(sessionId)
+    }
+    val listState = rememberLazyListState()
+
+    val showScrollToTop by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 5
+        }
+    }
+
+    Log.d( "Workout_History: ","sessionID:${sessionId!!}",)
     Scaffold(
         topBar = {
             TopBar(  //TODO
@@ -84,7 +114,24 @@ fun Workout_History(
                 backNavigate  = true,
                 onBackClickNavigate = onBackClickNavigate,
             )
-        }
+        },
+        floatingActionButton = {
+            AnimatedVisibility(visible = showScrollToTop) {
+                FloatingActionButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            listState.animateScrollToItem(0)
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowUp,
+                        contentDescription = "Scroll to top"
+                    )
+                }
+            }
+        },
+        floatingActionButtonPosition = FabPosition.End,
     ) { innerPadding ->
 
 
@@ -97,6 +144,7 @@ fun Workout_History(
 
 
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(20.dp, innerPadding.calculateTopPadding() + 20.dp, 20.dp, 0.dp),
@@ -249,34 +297,53 @@ fun Workout_History(
                         )
                     }
                 }
+            }
 
 
+            if(selectedTabIndex==0){
 
+                stickyHeader {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        text = "JULY", fontSize = 25.sp,
+                        textAlign = TextAlign.Center, fontWeight = FontWeight.Bold
+                    )
+                }
 
+                itemsIndexed(sessionDetails) { _, item ->
+                    HistoryByList(
+                        item = item,
+                        modifier = Modifier.animateItemPlacement()
+                    )
+                }
 
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    userScrollEnabled = false
-                ) { page ->
-                    sessionId?.let {id ->
-                        when (page) {
-                            1 -> {
-                                HistoryByCalender(Modifier.fillMaxSize())
-                            }
-
-                            0 -> {
-                                HistoryByList(
-                                    sessionId = id
-                                )
-                            }
-                        }
-                    }
-
+            } else {
+                item{
+                    HistoryByCalender(Modifier.fillMaxSize())
                 }
             }
 
+
+
+        }
+
+
+
+        //pagination
+        LaunchedEffect(listState) {
+            snapshotFlow {
+                listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+            }
+                .distinctUntilChanged()
+                .collect { lastVisibleIndex ->
+                    val totalItems = listState.layoutInfo.totalItemsCount
+                    if (lastVisibleIndex != null && lastVisibleIndex >= totalItems - 5) {
+                        Log.d("Pagination", "Trigger loadNextPage at index $lastVisibleIndex")
+                        viewModel.loadNextPage()
+                    }
+                }
         }
     }
 }

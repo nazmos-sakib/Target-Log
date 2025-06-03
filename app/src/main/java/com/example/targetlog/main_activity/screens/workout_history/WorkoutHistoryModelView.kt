@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 
@@ -37,6 +39,7 @@ class  WorkoutHistoryModelView  @Inject constructor(
     private var endReached = false
 
     private var currentSessionId: Long? = null
+    private val loadMutex = Mutex()
 
     init {
         //updateSessionHistory()
@@ -47,6 +50,7 @@ class  WorkoutHistoryModelView  @Inject constructor(
         if (currentSessionId != null) return // already initialized
         currentSessionId = sessionId
         loadNextPage()
+        Log.d("WorkoutHistoryModelView", "initialize:size ${sessionDetails.value.size}")
     }
 
 
@@ -66,7 +70,7 @@ class  WorkoutHistoryModelView  @Inject constructor(
         Log.d("workoutViewModel->", "updateSessionDetailsBySessionId: "+sessionDetails.value.size)
     }
 
-    fun loadNextPage() {
+    /*fun loadNextPage() {
         if (isLoading || endReached) return
 
         isLoading = true
@@ -90,6 +94,40 @@ class  WorkoutHistoryModelView  @Inject constructor(
                 println("Error loading page: ${e.message}")
             } finally {
                 isLoading = false
+            }
+        }
+    }*/
+
+    fun loadNextPage() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (endReached) return@launch
+
+            // Only one coroutine can enter this block at a time
+            loadMutex.withLock {
+                if (endReached) return@withLock
+
+                try {
+                    isLoading = true
+
+                    val newData = if (currentSessionId == null || currentSessionId!! < 1) {
+                        sessionRepository.getAllSessionsPaged(pageSize, currentOffset)
+                    } else {
+                        sessionRepository.getSessionsBySessionIdPaged(currentSessionId!!, pageSize, currentOffset)
+                    }
+
+                    if (newData.isEmpty()) {
+                        endReached = true
+                    } else {
+                        currentOffset += newData.size
+                        _sessionDetails.update { it + newData }
+                    }
+
+                    Log.d("History-ViewModel", "loadNextPage:newData size: ${newData.size}")
+                } catch (e: Exception) {
+                    println("Error loading page: ${e.message}")
+                } finally {
+                    isLoading = false
+                }
             }
         }
     }

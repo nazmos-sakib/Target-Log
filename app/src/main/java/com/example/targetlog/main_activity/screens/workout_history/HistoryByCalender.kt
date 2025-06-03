@@ -98,7 +98,7 @@ fun HistoryByCalender(
                 Box(modifier = Modifier
                     .onSizeChanged {
                         sizeInDp = density.run {
-                            Log.d("TAG", "onSizeChanged: ${it.toString()}")
+                            Log.d("HistoryByCalender", "onSizeChanged: ${it.toString()}")
                             DpSize(
                                 it.width.toDp(),
                                 it.height.toDp()
