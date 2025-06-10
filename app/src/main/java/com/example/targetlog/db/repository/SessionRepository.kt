@@ -1,12 +1,14 @@
 package com.example.targetlog.db.repository
 
 import androidx.lifecycle.LiveData
-import com.example.android_esp32_presure_sensore_esp_now.data.db.SessionIdCount
+import com.example.targetlog.data.db.SessionIdCount
 import com.example.targetlog.data.db.Session
 import com.example.targetlog.domain.BluetoothMessage
+import kotlinx.coroutines.flow.Flow
 
 interface SessionRepository {
-
+    //suspend fun getTotalSessionCount(): Flow<Int>
+    val getTotalWorkoutCountFlow: Flow<Int>
     fun getAllSessions(): LiveData<List<Session>>
     fun getSessionsById(sessionId: Long): LiveData<List<Session>>
 

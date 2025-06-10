@@ -1,15 +1,20 @@
 package com.example.targetlog.data.db.repository
 
-import com.example.android_esp32_presure_sensore_esp_now.data.db.SessionIdCount
+import com.example.targetlog.data.db.SessionIdCount
 import com.example.targetlog.data.db.Session
 import com.example.targetlog.db.SessionDataBase
 import com.example.targetlog.db.repository.SessionRepository
 import com.example.targetlog.domain.BluetoothMessage
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SessionRepositoryImpl @Inject constructor (
     private val db: SessionDataBase
 ) : SessionRepository {
+
+    override val getTotalWorkoutCountFlow: Flow<Int> = db.getSessionDao().getTotalWorkoutCount()
+    //override suspend fun getTotalSessionCount(): Flow<Int> = db.getSessionDao().getTotalSessionCount()
+
     override fun getAllSessions() = db.getSessionDao().getAllSessions()
     override fun getSessionsById(sessionId: Long) = db.getSessionDao().getSessionsById(sessionId)
 

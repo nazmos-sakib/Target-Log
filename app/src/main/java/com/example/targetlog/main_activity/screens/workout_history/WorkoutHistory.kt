@@ -72,9 +72,10 @@ import kotlin.math.log
     device = "id:pixel_8_pro", showBackground = true  // Uses a specific device profile
 )
 @Composable
-fun WorkOutPreview(){
+fun WorkOutPreview() {
     Workout_History()
 }
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Workout_History(
@@ -93,7 +94,10 @@ fun Workout_History(
     }
     val coroutineScope = rememberCoroutineScope()
 
-    val sessionDetails by viewModel.sessionDetails.collectAsState()
+    val totalCount by viewModel.totalWorkoutCount.collectAsState()
+    //val sessionDetails by viewModel.sessionDetails.collectAsState()
+    val sessionGroups by viewModel.groupedSessions.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.initialize(sessionId)
     }
@@ -105,13 +109,14 @@ fun Workout_History(
         }
     }
 
-    Log.d( "Workout_History: ","sessionID:${sessionId!!}",)
+    Log.d("Workout_History: ", "sessionID:${sessionId!!}")
     Scaffold(
         topBar = {
-            TopBar(  //TODO
+            TopBar(
+                //TODO
                 title = "SHOOTING FREESTYLE",
                 onBluetoothButtonClick = onClickGotoBluetoothScreen,
-                backNavigate  = true,
+                backNavigate = true,
                 onBackClickNavigate = onBackClickNavigate,
             )
         },
@@ -154,7 +159,10 @@ fun Workout_History(
             item {
 
                 Text(
-                    text = "WORKOUT COMPLETE",
+                    text = "WORKOUT " + when (sessionId > 0) {
+                        true -> "COMPLETE"
+                        else -> "HISTORY"
+                    },
                     modifier = Modifier.fillMaxWidth(.8f),
                     textAlign = TextAlign.Center, color = Color.White,
                     fontSize = 36.sp, fontWeight = FontWeight.Bold,
@@ -196,7 +204,7 @@ fun Workout_History(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
-                            text = "2,576",
+                            text = "$totalCount",
                             modifier = Modifier,
                             textAlign = TextAlign.Center, color = Purple40,
                             fontSize = 36.sp, fontWeight = FontWeight.Bold,
@@ -300,35 +308,37 @@ fun Workout_History(
             }
 
 
-            if(selectedTabIndex==0){
+            if (selectedTabIndex == 0) {
 
-                stickyHeader {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        text = "JULY", fontSize = 25.sp,
-                        textAlign = TextAlign.Center, fontWeight = FontWeight.Bold
-                    )
+                sessionGroups.forEach { group ->
+                    stickyHeader {
+
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp),
+                            text = group.monthYear.uppercase(), fontSize = 25.sp,
+                            textAlign = TextAlign.Center, fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    items(group.sessions) { session ->
+                        HistoryByList(
+                            item = session,
+                            modifier = Modifier.animateItemPlacement()
+                        )
+                    }
                 }
 
-                itemsIndexed(sessionDetails) { _, item ->
-                    HistoryByList(
-                        item = item,
-                        modifier = Modifier.animateItemPlacement()
-                    )
-                }
 
             } else {
-                item{
+                item {
                     HistoryByCalender(Modifier.fillMaxSize())
                 }
             }
 
 
-
         }
-
 
 
         //pagination

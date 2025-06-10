@@ -2,21 +2,26 @@ package com.example.targetlog.main_activity.screens.workout_history
 
 import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
-import co.yml.charts.common.extensions.isNotNull
-import com.example.android_esp32_presure_sensore_esp_now.data.db.SessionIdCount
+import com.example.targetlog.data.db.SessionIdCount
 import com.example.targetlog.data.db.Session
+import com.example.targetlog.data.db.SessionGroup
 import com.example.targetlog.db.repository.SessionRepository
 import com.example.targetlog.main_activity.screens.AppViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -31,7 +36,7 @@ class  WorkoutHistoryModelView  @Inject constructor(
 
     // 2. Initialize sessionDetails as StateFlow if needed (optional)
     private val _sessionDetails = MutableStateFlow<List<Session>>(emptyList())
-    val sessionDetails: StateFlow<List<Session>> = _sessionDetails
+    val sessionDetails: StateFlow<List<Session>> = _sessionDetails.asStateFlow()
 
     private var currentOffset = 0
     private val pageSize = 20
@@ -41,8 +46,21 @@ class  WorkoutHistoryModelView  @Inject constructor(
     private var currentSessionId: Long? = null
     private val loadMutex = Mutex()
 
+    /*val  :MutableIntState
+        get() = _totalWorkoutCount
+*/
+    // Backing property
+    private val _totalWorkoutCount = MutableStateFlow(0)
+    // Exposed to UI
+    val totalWorkoutCount: StateFlow<Int> = _totalWorkoutCount.asStateFlow()
+
+    val groupedSessions: StateFlow<List<SessionGroup>> = sessionDetails
+        .map { groupSessionsByMonth(it) }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
     init {
         //updateSessionHistory()
+        getTotalWorkOutCount()
     }
 
     fun initialize(sessionId: Long?) {
@@ -53,7 +71,14 @@ class  WorkoutHistoryModelView  @Inject constructor(
         Log.d("WorkoutHistoryModelView", "initialize:size ${sessionDetails.value.size}")
     }
 
-
+    private fun getTotalWorkOutCount(){
+        viewModelScope.launch {
+            sessionRepository.getTotalWorkoutCountFlow.collect {
+                Log.d("WorkoutHistoryModelView", "updated TotalWorkOutCount: $it")
+                _totalWorkoutCount.value = it
+            }
+        }
+    }
 
     fun updateSessionDetailsBySessionId(sessionId:Long){
         Log.d("workoutViewModel->", "updateSessionDetailsBySessionId: session_ID$sessionId")
@@ -129,6 +154,15 @@ class  WorkoutHistoryModelView  @Inject constructor(
                     isLoading = false
                 }
             }
+        }
+    }
+
+    private fun groupSessionsByMonth(sessions: List<Session>): List<SessionGroup> {
+        val formatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
+        return sessions.groupBy { session ->
+            formatter.format(session.timestamp)
+        }.map { (monthYear, sessionList) ->
+            SessionGroup(monthYear, sessionList)
         }
     }
 }

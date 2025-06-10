@@ -7,12 +7,16 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.targetlog.data.db.Session
-import com.example.android_esp32_presure_sensore_esp_now.data.db.SessionIdCount
+import com.example.targetlog.data.db.SessionIdCount
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SessionDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(article: Session): Long  //update + insert
+
+    @Query("SELECT COUNT(*) FROM session")
+    fun getTotalWorkoutCount(): Flow<Int>
 
     @Query("SELECT * FROM session WHERE sessionId = :sessionId")
     fun getSessionsById(sessionId: Long): LiveData<List<Session>>
