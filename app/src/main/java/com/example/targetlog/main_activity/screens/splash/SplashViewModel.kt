@@ -3,11 +3,9 @@ package com.example.targetlog.main_activity.screens.splash
 
 import com.example.targetlog.commons.BOTTOM_NAV_HOME_SCREEN
 import com.example.targetlog.commons.SIGN_IN_SCREEN
-import com.example.targetlog.commons.SIGN_UP_SCREEN
 import com.example.targetlog.commons.SPLASH_SCREEN
 import com.example.targetlog.main_activity.screens.AppViewModel
-import com.example.targetlog.model.service.AccountService
-import com.google.firebase.auth.FirebaseAuth
+import com.example.targetlog.db.firebase.repository.AccountService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

@@ -1,7 +1,7 @@
-package com.example.targetlog.model.service.impl
+package com.example.targetlog.data.db.firebase.repository
 
-import com.example.targetlog.model.User
-import com.example.targetlog.model.service.AccountService
+import com.example.targetlog.data.db.firebase.User
+import com.example.targetlog.db.firebase.repository.AccountService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.Firebase

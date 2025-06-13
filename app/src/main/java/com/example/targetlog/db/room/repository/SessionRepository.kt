@@ -1,8 +1,8 @@
-package com.example.targetlog.db.repository
+package com.example.targetlog.db.room.repository
 
 import androidx.lifecycle.LiveData
-import com.example.targetlog.data.db.SessionIdCount
-import com.example.targetlog.data.db.Session
+import com.example.targetlog.data.db.room.SessionIdCount
+import com.example.targetlog.data.db.room.Session
 import com.example.targetlog.domain.BluetoothMessage
 import kotlinx.coroutines.flow.Flow
 
@@ -16,7 +16,10 @@ interface SessionRepository {
     suspend fun insertAll(sessions: List<Session>)
 
     suspend fun insert(session: Session): Long
-    suspend fun insert(sessionID: Long, trainingHand: String?, message: BluetoothMessage)
+    suspend fun insert(
+        sessionID: Long, trainingHand: String?, message: BluetoothMessage,
+        onFinishCallBack:(session:Session)->Unit
+    )
 
 
     suspend fun deleteArticle(session: Session)

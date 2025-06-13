@@ -1,4 +1,4 @@
-package com.example.targetlog.db
+package com.example.targetlog.db.room
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -6,8 +6,8 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.targetlog.data.db.Session
-import com.example.targetlog.data.db.SessionIdCount
+import com.example.targetlog.data.db.room.Session
+import com.example.targetlog.data.db.room.SessionIdCount
 import kotlinx.coroutines.flow.Flow
 
 @Dao

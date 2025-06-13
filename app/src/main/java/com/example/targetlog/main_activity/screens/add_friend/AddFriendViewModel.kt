@@ -2,12 +2,13 @@ package com.example.targetlog.main_activity.screens.add_friend
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.targetlog.main_activity.screens.AppViewModel
-import com.example.targetlog.model.User
-import com.example.targetlog.model.service.AccountService
-import com.example.targetlog.model.service.FireStoreService
+import com.example.targetlog.data.db.firebase.User
+import com.example.targetlog.db.firebase.repository.AccountService
+import com.example.targetlog.db.firebase.repository.FireStoreService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.jvm.Throws
 
 @HiltViewModel
 class AddFriendViewModel  @Inject constructor(
@@ -47,6 +47,11 @@ class AddFriendViewModel  @Inject constructor(
                 withContext(Dispatchers.Main){
                     Toast.makeText(context,exception?.message,Toast.LENGTH_SHORT).show()
                 }
+            }
+            if (exception != null) {
+                Log.d("AddFriendViewModel", "fetchUsers: exception: ${exception.message}")
+            } else {
+                Log.d("AddFriendViewModel", "fetchUsers: exception: null exception")
             }
         }
 

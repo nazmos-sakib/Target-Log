@@ -3,10 +3,10 @@ package com.example.targetlog.main_activity.screens.workout_history
 import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.viewModelScope
-import com.example.targetlog.data.db.SessionIdCount
-import com.example.targetlog.data.db.Session
-import com.example.targetlog.data.db.SessionGroup
-import com.example.targetlog.db.repository.SessionRepository
+import com.example.targetlog.data.db.room.SessionIdCount
+import com.example.targetlog.data.db.room.Session
+import com.example.targetlog.data.db.room.SessionGroup
+import com.example.targetlog.db.room.repository.SessionRepository
 import com.example.targetlog.main_activity.screens.AppViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +36,10 @@ class  WorkoutHistoryModelView  @Inject constructor(
 
     // 2. Initialize sessionDetails as StateFlow if needed (optional)
     private val _sessionDetails = MutableStateFlow<List<Session>>(emptyList())
-    val sessionDetails: StateFlow<List<Session>> = _sessionDetails.asStateFlow()
+    private val sessionDetails: StateFlow<List<Session>> = _sessionDetails.asStateFlow()
+    val groupedSessions: StateFlow<List<SessionGroup>> = sessionDetails
+        .map { groupSessionsByMonth(it) }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     private var currentOffset = 0
     private val pageSize = 20
@@ -46,17 +49,11 @@ class  WorkoutHistoryModelView  @Inject constructor(
     private var currentSessionId: Long? = null
     private val loadMutex = Mutex()
 
-    /*val  :MutableIntState
-        get() = _totalWorkoutCount
-*/
-    // Backing property
+
     private val _totalWorkoutCount = MutableStateFlow(0)
     // Exposed to UI
     val totalWorkoutCount: StateFlow<Int> = _totalWorkoutCount.asStateFlow()
 
-    val groupedSessions: StateFlow<List<SessionGroup>> = sessionDetails
-        .map { groupSessionsByMonth(it) }
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     init {
         //updateSessionHistory()

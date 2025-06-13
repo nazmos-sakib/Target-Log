@@ -1,9 +1,9 @@
 package com.example.targetlog.module
 
-import com.example.targetlog.model.service.AccountService
-import com.example.targetlog.model.service.FireStoreService
-import com.example.targetlog.model.service.impl.AccountServiceImpl
-import com.example.targetlog.model.service.impl.FireStoreServiceImp
+import com.example.targetlog.db.firebase.repository.AccountService
+import com.example.targetlog.db.firebase.repository.FireStoreService
+import com.example.targetlog.data.db.firebase.repository.AccountServiceImpl
+import com.example.targetlog.data.db.firebase.repository.FireStoreServiceImp
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

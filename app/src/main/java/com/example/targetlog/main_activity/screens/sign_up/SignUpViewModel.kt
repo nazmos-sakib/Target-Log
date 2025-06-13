@@ -6,9 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.targetlog.commons.SPLASH_SCREEN
 import com.example.targetlog.main_activity.screens.AppViewModel
-import com.example.targetlog.model.User
-import com.example.targetlog.model.service.AccountService
-import com.example.targetlog.model.service.FireStoreService
+import com.example.targetlog.data.db.firebase.User
+import com.example.targetlog.db.firebase.repository.AccountService
+import com.example.targetlog.db.firebase.repository.FireStoreService
+import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.InternalCoroutinesApi
 import javax.inject.Inject
@@ -136,7 +137,7 @@ class SignUpViewModel  @Inject constructor(
                         phoneNumber = phoneNumber,
                         dateOfBirth = dateOfBirth,
                         skillLevel = skillLevel,
-                        timeStamp =  com.google.firebase.Timestamp.now()
+                        timeStamp =  Timestamp.now()
                     )
                     runInCoroutineBlock {
                         accountService.updateDisplayName(username)

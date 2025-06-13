@@ -1,4 +1,4 @@
-package com.example.targetlog.model
+package com.example.targetlog.data.db.firebase
 
 import com.google.firebase.Timestamp
 

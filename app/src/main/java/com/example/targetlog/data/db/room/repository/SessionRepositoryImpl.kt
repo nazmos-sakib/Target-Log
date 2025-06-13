@@ -1,9 +1,9 @@
-package com.example.targetlog.data.db.repository
+package com.example.targetlog.data.db.room.repository
 
-import com.example.targetlog.data.db.SessionIdCount
-import com.example.targetlog.data.db.Session
-import com.example.targetlog.db.SessionDataBase
-import com.example.targetlog.db.repository.SessionRepository
+import com.example.targetlog.data.db.room.SessionIdCount
+import com.example.targetlog.data.db.room.Session
+import com.example.targetlog.db.room.SessionDataBase
+import com.example.targetlog.db.room.repository.SessionRepository
 import com.example.targetlog.domain.BluetoothMessage
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -37,18 +37,22 @@ class SessionRepositoryImpl @Inject constructor (
 
     }
 
-    override suspend fun insert(sessionID: Long, trainingHand:String?, message: BluetoothMessage) {
-
+    override suspend fun insert(
+        sessionID: Long,
+        trainingHand: String?,
+        message: BluetoothMessage,
+        onFinishCallBack: (session: Session) -> Unit
+    ) {
             val values  =   message.message.split(",") // Split the string on the comma
             if (values.size == 2) {
-                insert(
-                    Session(
-                        sessionId = sessionID,
-                        hand = trainingHand ,
-                        speed = values[1],
-                        timestamp = message.timestamp
-                    )
+                val s = Session(
+                    sessionId = sessionID,
+                    hand = trainingHand ,
+                    speed = values[1],
+                    timestamp = message.timestamp
                 )
+                insert(s)
+                onFinishCallBack(s)
             }
 
 

@@ -2,8 +2,6 @@ package com.example.targetlog.main_activity.screens.add_friend
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.pm.PackageManager
 import android.provider.ContactsContract
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,9 +20,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -58,25 +53,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.targetlog.R
 import com.example.targetlog.commons.getTopLineShape
 import com.example.targetlog.main_activity.screens.common_components.ContactInvitationCard
 import com.example.targetlog.main_activity.screens.common_components.FriendsCardWithIcon
 import com.example.targetlog.main_activity.screens.common_components.TopBar
-import com.example.targetlog.model.User
+import com.example.targetlog.data.db.firebase.User
 import com.example.targetlog.model.service.ContactDTO
 import com.example.targetlog.ui.theme.Blue76
 import com.example.targetlog.ui.theme.DarkGreen833
 import com.example.targetlog.ui.theme.DarkLight
 import com.example.targetlog.ui.theme.GreenLight
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 
 @OptIn(ExperimentalFoundationApi::class)

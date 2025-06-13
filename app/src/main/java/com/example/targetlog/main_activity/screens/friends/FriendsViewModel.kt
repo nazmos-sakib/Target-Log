@@ -1,14 +1,12 @@
 package com.example.targetlog.main_activity.screens.friends
 
-import android.content.ContentResolver
 import android.content.Context
-import android.database.Cursor
-import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import com.example.targetlog.main_activity.screens.AppViewModel
-import com.example.targetlog.model.User
-import com.example.targetlog.model.service.AccountService
-import com.example.targetlog.model.service.FireStoreService
+import com.example.targetlog.data.db.firebase.User
+import com.example.targetlog.db.firebase.repository.AccountService
+import com.example.targetlog.db.firebase.repository.FireStoreService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +34,7 @@ class FriendsViewModel   @Inject constructor(
             fireStoreService.getFriendList(
                 currentUserId = accountService.currentUserId,
                 onResult = {
+                    Log.d("FriendsViewModel", "fetchFriends: numbers of Friends: ${it.size}")
                     _friendsList.value = it
                 }
             )
@@ -44,6 +43,11 @@ class FriendsViewModel   @Inject constructor(
                 withContext(Dispatchers.Main){
                     Toast.makeText(context,exception?.message, Toast.LENGTH_SHORT).show()
                 }
+            }
+            if (exception != null) {
+                Log.d("FriendsViewModel", "fetchFriends: exception: ${exception.message}")
+            }else{
+                Log.d("FriendsViewModel", "fetchFriends: exception: null exception")
             }
         }
     }

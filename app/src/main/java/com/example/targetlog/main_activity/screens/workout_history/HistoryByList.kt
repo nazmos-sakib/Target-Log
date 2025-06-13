@@ -1,7 +1,6 @@
 package com.example.targetlog.main_activity.screens.workout_history
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,12 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.targetlog.commons.getDateTimeParts
 import com.example.targetlog.commons.getTopLineShape
-import com.example.targetlog.data.db.Session
+import com.example.targetlog.data.db.room.Session
 import com.example.targetlog.main_activity.screens.common_components.DateBoxButton
 import com.example.targetlog.training_activity.common_component.ShareDeleteDropdownMenu
 import com.example.targetlog.ui.theme.DarkGreen833
 import java.util.Date
-import javax.inject.Inject
 
 
 /*@Preview

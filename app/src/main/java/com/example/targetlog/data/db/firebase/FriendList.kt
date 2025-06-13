@@ -1,4 +1,4 @@
-package com.example.targetlog.model
+package com.example.targetlog.data.db.firebase
 
 data class FriendList(
     val userId:String = "",

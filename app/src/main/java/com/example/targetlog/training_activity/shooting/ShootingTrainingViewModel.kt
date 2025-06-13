@@ -3,15 +3,12 @@ package com.example.targetlog.training_activity.shooting
 import android.util.Log
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.viewModelScope
-import co.yml.charts.common.extensions.isNotNull
 import com.example.targetlog.commons.getCombinedDateTimeAsLong
-import com.example.targetlog.data.db.Session
-import com.example.targetlog.db.repository.SessionRepository
+import com.example.targetlog.db.firebase.repository.AccountService
+import com.example.targetlog.db.firebase.repository.FireStoreService
+import com.example.targetlog.db.room.repository.SessionRepository
 import com.example.targetlog.domain.BluetoothController
-import com.example.targetlog.domain.BluetoothDeviceDomain
-import com.example.targetlog.domain.BluetoothMessage
 import com.example.targetlog.domain.ConnectionResult
 import com.example.targetlog.main_activity.screens.AppViewModel
 import com.example.targetlog.training_activity.shooting.data.ShootingSessionUiState
@@ -19,28 +16,25 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
-import kotlin.math.log
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @HiltViewModel
 class ShootingTrainingViewModel @Inject constructor(
     private val bluetoothController: BluetoothController,
-    private val sessionRepository: SessionRepository
+    private val sessionRepository: SessionRepository,
+    private val accountService: AccountService,
+    private val fireStoreService: FireStoreService,
 ) : AppViewModel() {
     private val TAG: String = "ShootingTrainingViewModel->"
 
@@ -145,10 +139,22 @@ class ShootingTrainingViewModel @Inject constructor(
                 is ConnectionResult.TransferSucceeded -> {
                     //update DataBase
                     _state.value.sessionId?.let { id->
+                        //insert in Room DB
                         sessionRepository.insert(
                             trainingHand = _state.value.trainingHand,
                             sessionID = id,
-                            message = result.message
+                            message = result.message,
+                            onFinishCallBack = {roomSession->
+                                //insert in firebase-firestore sessionList Table
+                                viewModelScope.launch {
+                                    fireStoreService.uploadSessionToFirebase(
+                                        session = roomSession,
+                                        currentUserId = accountService.currentUserId,
+                                        onSuccess = { Log.d(TAG, "listen: firestore upload successful ${roomSession.entryUuid}")},
+                                        onError = { Log.d(TAG, "listen: firestore upload error: $it")}
+                                    )
+                                }
+                            }
                         )
                     }
                     //update UI

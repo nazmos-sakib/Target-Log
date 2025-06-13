@@ -1,15 +1,13 @@
 package com.example.targetlog.main_activity.screens.bottom_nav_profile
 
-import androidx.lifecycle.viewModelScope
 import com.example.targetlog.commons.SPLASH_SCREEN
 import com.example.targetlog.main_activity.screens.AppViewModel
-import com.example.targetlog.model.User
-import com.example.targetlog.model.service.AccountService
-import com.example.targetlog.model.service.FireStoreService
+import com.example.targetlog.data.db.firebase.User
+import com.example.targetlog.db.firebase.repository.AccountService
+import com.example.targetlog.db.firebase.repository.FireStoreService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

@@ -1,11 +1,12 @@
-package com.example.targetlog.model.service
+package com.example.targetlog.db.firebase.repository
 
-import com.example.targetlog.model.User
+import com.example.targetlog.data.db.firebase.User
+import com.example.targetlog.data.db.room.Session
 
 interface FireStoreService {
 
     suspend fun savePerson(user: User)
-    suspend fun retrieveUserByUserId( currentUserId: String):User?
+    suspend fun retrieveUserByUserId( currentUserId: String): User?
     suspend fun getUsersFromFirestore(currentUserId: String,onResult: (List<User>) -> Unit)
     suspend fun addUserToFriendList(
         currentUserId: String,
@@ -23,5 +24,16 @@ interface FireStoreService {
     suspend fun getFriendList(
         currentUserId: String,
         onResult: (List<User>) -> Unit,
+    )
+
+    suspend fun uploadSessionToFirebase(
+        session: Session,
+        currentUserId: String,
+        onSuccess: () -> Unit,
+        onError: (String)->Unit
+    )
+    suspend fun uploadSessionsToFirebase(
+        sessions: List<Session>,
+        userId: String
     )
 }

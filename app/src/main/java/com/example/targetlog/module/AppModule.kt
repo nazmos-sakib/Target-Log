@@ -5,9 +5,10 @@ import androidx.room.Room
 //import androidx.room.Room
 import com.example.targetlog.commons.DB_NAME
 import com.example.targetlog.data.AndroidBluetoothController
-import com.example.targetlog.data.db.repository.SessionRepositoryImpl
-import com.example.targetlog.db.SessionDataBase
-import com.example.targetlog.db.repository.SessionRepository
+import com.example.targetlog.data.db.room.migrations.MIGRATION_1_2
+import com.example.targetlog.data.db.room.repository.SessionRepositoryImpl
+import com.example.targetlog.db.room.SessionDataBase
+import com.example.targetlog.db.room.repository.SessionRepository
 import com.example.targetlog.domain.BluetoothController
 import dagger.Module
 import dagger.Provides
@@ -36,17 +37,19 @@ object AppModule {
 */
         @Provides
         @Singleton
-        fun provideSessionDatabase(@ApplicationContext context: Context):  SessionDataBase {
+        fun provideSessionDatabase(@ApplicationContext context: Context): SessionDataBase {
             return  Room.databaseBuilder(
                 context,
                 SessionDataBase::class.java,
                 DB_NAME,
-            ).build()
+            )
+                .addMigrations(MIGRATION_1_2)  //session schema changed. migration needed
+                .build()
         }
 
         @Provides
         @Singleton
-        fun providesSessionRepository(db:SessionDataBase): SessionRepository {
+        fun providesSessionRepository(db: SessionDataBase): SessionRepository {
             return SessionRepositoryImpl(db)
         }
 }

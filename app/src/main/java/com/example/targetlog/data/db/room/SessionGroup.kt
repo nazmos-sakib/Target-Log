@@ -1,4 +1,4 @@
-package com.example.targetlog.data.db
+package com.example.targetlog.data.db.room
 
 data class SessionGroup(
     val monthYear: String,

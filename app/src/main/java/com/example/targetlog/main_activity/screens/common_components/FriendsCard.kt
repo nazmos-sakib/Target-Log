@@ -28,13 +28,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.targetlog.R
 import com.example.targetlog.commons.FRIENDS_PROFILE_SCREEN
-import com.example.targetlog.model.User
+import com.example.targetlog.data.db.firebase.User
 import com.example.targetlog.model.service.ContactDTO
 
 @Preview
 @Composable
 fun FriendsCard(
-    user:User = User(),
+    user: User = User(),
     onClickNavigateToProfile:(String)->Unit={ _ -> },
 ){
     Row(

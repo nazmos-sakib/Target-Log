@@ -1,6 +1,6 @@
-package com.example.targetlog.model.service
+package com.example.targetlog.db.firebase.repository
 
-import com.example.targetlog.model.User
+import com.example.targetlog.data.db.firebase.User
 import kotlinx.coroutines.flow.Flow
 
 interface AccountService {

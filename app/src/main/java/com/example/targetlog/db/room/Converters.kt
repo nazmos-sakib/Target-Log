@@ -1,4 +1,4 @@
-package com.example.targetlog.db
+package com.example.targetlog.db.room
 
 import androidx.room.TypeConverter
 import java.util.Date
