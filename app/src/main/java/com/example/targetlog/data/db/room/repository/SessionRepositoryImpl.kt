@@ -65,6 +65,7 @@ class SessionRepositoryImpl @Inject constructor (
     }
 
     override suspend fun deleteArticle(session: Session) = db.getSessionDao().deleteSession(session)
+    override suspend fun deleteAllData() = db.getSessionDao().deleteAllData()
 
     override suspend fun getSessionsHistory(): List<SessionIdCount> = db.getSessionDao().getSessionsHistory()
     override suspend fun getAllSessionsPaged(limit: Int, offset: Int): List<Session> = db.getSessionDao().getSessionsPaged(limit, offset)

@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.example.targetlog.commons.TRAINING_MODE_SHOOTING
-import com.example.targetlog.training_activity.shooting.ShootingTrainingScreen
-import com.example.targetlog.training_activity.wall_ball.TrainingWallBallScreen
-import com.example.targetlog.ui.theme.TargetLogTheme
+import com.example.targetlog.presentation.training_activity.shooting.ShootingTrainingScreen
+import com.example.targetlog.presentation.training_activity.wall_ball.TrainingWallBallScreen
+import com.example.targetlog.presentation.ui.theme.TargetLogTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

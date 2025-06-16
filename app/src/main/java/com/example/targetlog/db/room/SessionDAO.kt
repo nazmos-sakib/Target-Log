@@ -56,4 +56,7 @@ interface SessionDAO {
 
     @Delete
     suspend fun deleteSession(article: Session)
+
+    @Query("DELETE FROM session")
+    suspend fun deleteAllData()
 }

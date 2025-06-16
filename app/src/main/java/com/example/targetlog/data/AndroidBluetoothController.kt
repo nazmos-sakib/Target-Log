@@ -10,7 +10,7 @@ import android.content.Context
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.util.Log
-import com.example.note_with_firebase.commons.ERROR_TAG
+import com.example.targetlog.commons.ERROR_TAG
 import com.example.targetlog.broadcast_recivers.BluetoothConnectionStatusReceiver
 import com.example.targetlog.broadcast_recivers.BondStateReceiver
 import com.example.targetlog.broadcast_recivers.FoundDeviceReceiver

@@ -24,6 +24,7 @@ interface FireStoreService {
     suspend fun getFriendList(
         currentUserId: String,
         onResult: (List<User>) -> Unit,
+        onFailure: (Throwable) -> Unit
     )
 
     suspend fun uploadSessionToFirebase(

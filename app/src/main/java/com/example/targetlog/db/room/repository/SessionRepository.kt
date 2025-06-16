@@ -23,6 +23,7 @@ interface SessionRepository {
 
 
     suspend fun deleteArticle(session: Session)
+    suspend fun deleteAllData()
 
     suspend fun getSessionsHistory(): List<SessionIdCount>
     suspend fun getSessionDetailsBySessionId(sessionId: Long): List<Session>

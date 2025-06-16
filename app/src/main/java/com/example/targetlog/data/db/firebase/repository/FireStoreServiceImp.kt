@@ -16,6 +16,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FireStoreServiceImp @Inject constructor() : FireStoreService {
+    private val TAG = "FireStoreServiceImp"
     private val firebaseDb: FirebaseFirestore = Firebase.firestore
     private val friendsListTable: CollectionReference = firebaseDb.collection("friendsList")
     private val userTable: CollectionReference = firebaseDb.collection("users")
@@ -165,7 +166,11 @@ class FireStoreServiceImp @Inject constructor() : FireStoreService {
             }
     }
 
-    override suspend fun getFriendList(currentUserId: String, onResult: (List<User>) -> Unit) {
+    override suspend fun getFriendList(
+        currentUserId: String,
+        onResult: (List<User>) -> Unit,
+        onFailure: (Throwable) -> Unit
+    ) {
         friendsListTable
             .whereEqualTo("userId", currentUserId)
             .get()
@@ -185,12 +190,16 @@ class FireStoreServiceImp @Inject constructor() : FireStoreService {
                         }
                         .addOnFailureListener { exception ->
                             // Handle the error (for example, log it)
-                            onResult(emptyList())
+                            onFailure(exception)
+                            //onResult(emptyList())
                         }
+                }else{
+                    onFailure(Exception("No friends found"))
                 }
             }
             .addOnFailureListener {
-                onResult(emptyList())
+                onFailure(it)
+                //onResult(emptyList())
             }
     }
 

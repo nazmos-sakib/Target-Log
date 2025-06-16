@@ -53,23 +53,23 @@ import com.example.targetlog.commons.SPLASH_SCREEN
 import com.example.targetlog.commons.WORKOUT_HISTORY_SCREEN
 import com.example.targetlog.commons.WORKOUT_HISTORY_START_DESTINATION_SCREEN
 import com.example.targetlog.data.persistent.SessionManager
-import com.example.targetlog.main_activity.screens.analytics.AnalyticScreen
-import com.example.targetlog.main_activity.screens.bluetooth.BluetoothScreen
-import com.example.targetlog.main_activity.screens.add_friend.AddAFriend
-import com.example.targetlog.main_activity.screens.friend_profile.FriendProfileScreen
-import com.example.targetlog.main_activity.screens.friends.FriendsScreen
-import com.example.targetlog.main_activity.screens.bottom_nav_home.HomeScreen
-import com.example.targetlog.main_activity.screens.personal.ChangeDisplayNameScreen
-import com.example.targetlog.main_activity.screens.personal.ChangeEmailScreen
-import com.example.targetlog.main_activity.screens.personal.PersonalScreen
-import com.example.targetlog.main_activity.screens.bottom_nav_profile.ProfileScreen
-import com.example.targetlog.main_activity.screens.bottom_nav_training.BottomNavTrainingScreen
-import com.example.targetlog.main_activity.screens.find_my_target.FindMyTargetScreen
-import com.example.targetlog.main_activity.screens.sign_in.SignInScreen
- import com.example.targetlog.main_activity.screens.sign_up.SignUpScreen
-import com.example.targetlog.main_activity.screens.splash.SplashScreen
-import com.example.targetlog.main_activity.screens.workout_history.Workout_History
-import com.example.targetlog.ui.theme.TargetLogTheme
+import com.example.targetlog.presentation.main_activity.screens.add_friend.AddAFriend
+import com.example.targetlog.presentation.main_activity.screens.analytics.AnalyticScreen
+import com.example.targetlog.presentation.main_activity.screens.bluetooth.BluetoothScreen
+import com.example.targetlog.presentation.main_activity.screens.bottom_nav_home.HomeScreen
+import com.example.targetlog.presentation.main_activity.screens.bottom_nav_profile.ProfileScreen
+import com.example.targetlog.presentation.main_activity.screens.bottom_nav_training.BottomNavTrainingScreen
+import com.example.targetlog.presentation.main_activity.screens.find_my_target.FindMyTargetScreen
+import com.example.targetlog.presentation.main_activity.screens.friend_profile.FriendProfileScreen
+import com.example.targetlog.presentation.main_activity.screens.friends.FriendsScreen
+import com.example.targetlog.presentation.main_activity.screens.personal.ChangeDisplayNameScreen
+import com.example.targetlog.presentation.main_activity.screens.personal.ChangeEmailScreen
+import com.example.targetlog.presentation.main_activity.screens.personal.PersonalScreen
+import com.example.targetlog.presentation.main_activity.screens.sign_in.SignInScreen
+import com.example.targetlog.presentation.main_activity.screens.sign_up.SignUpScreen
+import com.example.targetlog.presentation.main_activity.screens.splash.SplashScreen
+import com.example.targetlog.presentation.main_activity.screens.workout_history.Workout_History
+import com.example.targetlog.presentation.ui.theme.TargetLogTheme
 
 @Composable
 fun AppEntry(
