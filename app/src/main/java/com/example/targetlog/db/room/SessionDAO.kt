@@ -15,6 +15,12 @@ interface SessionDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(article: Session): Long  //update + insert
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSessions(sessions: List<Session>)
+
+    @Query("SELECT COUNT(*) FROM session")
+    suspend fun getTotalCount(): Int
+
     @Query("SELECT COUNT(*) FROM session")
     fun getTotalWorkoutCount(): Flow<Int>
 

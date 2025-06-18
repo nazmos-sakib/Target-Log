@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
+import java.util.Date
 import javax.inject.Inject
 
 class FireStoreServiceImp @Inject constructor() : FireStoreService {
@@ -209,8 +210,6 @@ class FireStoreServiceImp @Inject constructor() : FireStoreService {
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ) {
-
-
         val sessionData = FirestoreSession(
             entryUuid = session.entryUuid, // include this if needed
             sessionId = session.sessionId,
@@ -258,13 +257,46 @@ class FireStoreServiceImp @Inject constructor() : FireStoreService {
 
         val sessionListDocument = FirestoreSessionList(
             userId = userId,
-            sessions = firestoreSessions
+            listOfSession = firestoreSessions
         )
 
         firestore.collection("sessionsList")
             .document(userId)
             .set(sessionListDocument) // overwrites the entire document
     }
+
+    override suspend fun syncSessionsWithFirestore(
+        userId: String,
+        onSuccess: (sessions: List<Session>) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        try {
+            val snapshot = sessionsTable.document(userId).get().await()
+            if (!snapshot.exists()) {
+                onError("No session data found for user.")
+                return
+            }
+
+            val sessionList = snapshot.toObject(FirestoreSessionList::class.java)
+                ?.listOfSession.orEmpty()
+
+            val sessions = sessionList.map { firestoreSession ->
+                Session(
+                    entryUuid = firestoreSession.entryUuid,
+                    sessionId = firestoreSession.sessionId,
+                    speed = firestoreSession.speed,
+                    hand = firestoreSession.hand,
+                    timestamp = Date(firestoreSession.timestamp)
+                )
+            }
+            Log.i(TAG, "syncSessionsWithFirestore: session size ${sessions.size}")
+            onSuccess(sessions)
+        } catch (e: Exception) {
+            Log.e("Sync", "Sync error: ${e.message}", e)
+            onError(e.message ?: "Sync failed")
+        }
+    }
+
 
 
 }

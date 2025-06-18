@@ -2,6 +2,7 @@ package com.example.targetlog.db.firebase.repository
 
 import com.example.targetlog.data.db.firebase.User
 import com.example.targetlog.data.db.room.Session
+import com.google.type.Date
 
 interface FireStoreService {
 
@@ -36,5 +37,11 @@ interface FireStoreService {
     suspend fun uploadSessionsToFirebase(
         sessions: List<Session>,
         userId: String
+    )
+
+    suspend fun syncSessionsWithFirestore(
+        userId: String,
+        onSuccess: (sessions: List<Session>) -> Unit,
+        onError: (String) -> Unit
     )
 }

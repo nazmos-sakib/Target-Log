@@ -13,6 +13,7 @@ class SessionRepositoryImpl @Inject constructor (
 ) : SessionRepository {
 
     override val getTotalWorkoutCountFlow: Flow<Int> = db.getSessionDao().getTotalWorkoutCount()
+    override suspend fun getTotalCount(): Int =db.getSessionDao().getTotalCount()
     //override suspend fun getTotalSessionCount(): Flow<Int> = db.getSessionDao().getTotalSessionCount()
 
     override fun getAllSessions() = db.getSessionDao().getAllSessions()
@@ -63,6 +64,8 @@ class SessionRepositoryImpl @Inject constructor (
             insert( session)
         }
     }
+
+    override suspend fun firestoreToLocalInsertAll(sessions: List<Session>) = db.getSessionDao().insertSessions(sessions)
 
     override suspend fun deleteArticle(session: Session) = db.getSessionDao().deleteSession(session)
     override suspend fun deleteAllData() = db.getSessionDao().deleteAllData()

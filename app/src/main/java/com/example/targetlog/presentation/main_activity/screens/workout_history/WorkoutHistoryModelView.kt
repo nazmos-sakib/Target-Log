@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.targetlog.data.db.room.SessionIdCount
 import com.example.targetlog.data.db.room.Session
 import com.example.targetlog.data.db.room.SessionGroup
+import com.example.targetlog.db.firebase.repository.AccountService
+import com.example.targetlog.db.firebase.repository.FireStoreService
 import com.example.targetlog.db.room.repository.SessionRepository
 import com.example.targetlog.presentation.main_activity.screens.AppViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

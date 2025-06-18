@@ -7,13 +7,14 @@ import com.example.targetlog.domain.BluetoothMessage
 import kotlinx.coroutines.flow.Flow
 
 interface SessionRepository {
-    //suspend fun getTotalSessionCount(): Flow<Int>
     val getTotalWorkoutCountFlow: Flow<Int>
+    suspend fun getTotalCount(): Int
     fun getAllSessions(): LiveData<List<Session>>
     fun getSessionsById(sessionId: Long): LiveData<List<Session>>
 
     suspend fun insertAll(sessionID: Long, messages: List<BluetoothMessage>)
     suspend fun insertAll(sessions: List<Session>)
+    suspend fun firestoreToLocalInsertAll(sessions: List<Session>)
 
     suspend fun insert(session: Session): Long
     suspend fun insert(

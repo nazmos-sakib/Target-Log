@@ -48,7 +48,7 @@ fun SplashScreen(
     }
 
     LaunchedEffect(true) {
-        delay(SPLASH_TIMEOUT)
+        //delay(SPLASH_TIMEOUT)
         viewModel.onAppStart(openAndPopUp)
     }
 }
