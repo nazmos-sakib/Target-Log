@@ -5,6 +5,7 @@ import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.viewModelScope
 import com.example.targetlog.commons.getCombinedDateTimeAsLong
+import com.example.targetlog.data.UploadManager
 import com.example.targetlog.db.firebase.repository.AccountService
 import com.example.targetlog.db.firebase.repository.FireStoreService
 import com.example.targetlog.db.room.repository.SessionRepository
@@ -13,7 +14,10 @@ import com.example.targetlog.domain.ConnectionResult
 import com.example.targetlog.presentation.main_activity.screens.AppViewModel
 import com.example.targetlog.presentation.training_activity.shooting.data.ShootingSessionUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,7 +39,7 @@ class ShootingTrainingViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
     private val accountService: AccountService,
     private val fireStoreService: FireStoreService,
-) : com.example.targetlog.presentation.main_activity.screens.AppViewModel() {
+) : AppViewModel() {
     private val TAG: String = "ShootingTrainingViewModel->"
 
     val isConnected: StateFlow<Boolean> = bluetoothController.isConnected
@@ -146,12 +150,12 @@ class ShootingTrainingViewModel @Inject constructor(
                             message = result.message,
                             onFinishCallBack = {roomSession->
                                 //insert in firebase-firestore sessionList Table
-                                viewModelScope.launch {
+                                UploadManager.uploadData {  //viewModelScope.launch { // now the upload process will alive even when viewModel is changed
                                     fireStoreService.uploadSessionToFirebase(
                                         session = roomSession,
                                         currentUserId = accountService.currentUserId,
                                         onSuccess = { Log.d(TAG, "listen: firestore upload successful ${roomSession.entryUuid}")},
-                                        onError = { Log.d(TAG, "listen: firestore upload error: $it")}
+                                        onError = { Log.e(TAG, "listen: firestore upload error: $it")}
                                     )
                                 }
                             }
@@ -211,5 +215,10 @@ class ShootingTrainingViewModel @Inject constructor(
                 trainingHand = value
             )
         }
+    }
+    override fun onCleared() {
+        super.onCleared()
+        // Decide whether to cancel here or let it continue
+        // uploadScope.cancel() // if you want to cancel
     }
 }

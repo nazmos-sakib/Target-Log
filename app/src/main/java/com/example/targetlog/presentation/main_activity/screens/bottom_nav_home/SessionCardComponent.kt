@@ -145,6 +145,17 @@ fun SessionCard (
 @Preview
 @Composable
 fun SessionCardPreview (){
+    SessionCard1(profileImage = 1, username = "Naz", numberOfShots = 23, timeSpent = "00:23:45", timeAgo = "1")
+}
+
+@Composable
+fun SessionCard1 (
+    profileImage: Int,
+    username: String,
+    numberOfShots: Int,
+    timeSpent: String,
+    timeAgo: String
+){
 
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -165,15 +176,15 @@ fun SessionCardPreview (){
                 )
 
                 Column(modifier = Modifier.fillMaxWidth(.5f)) {
-                    Text(text = "User1 completed a shooting session in",
+                    Text(text = "$username completed a shooting session on",
                         color= Color.White)
-                    Text(text = "00:23:45",
+                    Text(text = timeSpent,
                         color= Color.White)
                 }
 
                 Column(horizontalAlignment = Alignment.End) {
 
-                    Text(text = "158",
+                    Text(text = "$numberOfShots",
                         fontSize = 40.sp,
                         textAlign = TextAlign.Right,
                         fontWeight = FontWeight.Bold,
@@ -202,7 +213,7 @@ fun SessionCardPreview (){
                 }
 
 
-                Text(text = "2 days ago",
+                Text(text = "$timeAgo days ago",
                     textAlign = TextAlign.Right,
                     fontWeight = FontWeight.Bold,
                     color= Color.Gray,

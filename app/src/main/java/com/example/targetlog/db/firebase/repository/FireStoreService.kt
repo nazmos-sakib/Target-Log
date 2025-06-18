@@ -3,6 +3,7 @@ package com.example.targetlog.db.firebase.repository
 import com.example.targetlog.data.db.firebase.User
 import com.example.targetlog.data.db.room.Session
 import com.google.type.Date
+import kotlinx.coroutines.flow.Flow
 
 interface FireStoreService {
 
@@ -44,4 +45,8 @@ interface FireStoreService {
         onSuccess: (sessions: List<Session>) -> Unit,
         onError: (String) -> Unit
     )
+
+    suspend fun friendsTimeLine(
+        currentUserId: String,
+    ): Flow<List<User>>
 }

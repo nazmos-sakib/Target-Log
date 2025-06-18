@@ -1,4 +1,4 @@
-package com.example.targetlog.data_classes
+package com.example.targetlog.model.data_classes
 
 import android.icu.text.CaseMap.Title
 import androidx.compose.ui.graphics.vector.ImageVector

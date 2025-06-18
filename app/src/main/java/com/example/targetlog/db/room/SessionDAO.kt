@@ -30,13 +30,14 @@ interface SessionDAO {
     @Query("SELECT * FROM session ")
     fun getAllSessions(): LiveData<List<Session>>
 
-    @Query(
-        """
-        SELECT sessionId, COUNT(sessionId) AS count 
+    @Query("""
+        SELECT 
+            sessionId, 
+            COUNT(*) AS count, 
+            DATE(timestamp) AS date 
         FROM session 
-        GROUP BY sessionId
-    """
-    )
+        GROUP BY sessionId, DATE(timestamp)
+    """)
     fun getSessionsHistory(): List<SessionIdCount>
 
     @Query("SELECT * FROM session WHERE sessionId = :sessionId")

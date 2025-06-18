@@ -32,7 +32,7 @@ import com.example.targetlog.commons.BOTTOM_NAV_HOME_SCREEN
 import com.example.targetlog.commons.BOTTOM_NAV_PROFILE_SCREEN
 import com.example.targetlog.commons.BOTTOM_NAV_TRAINING_SCREEN
 import com.example.targetlog.commons.getTopLineShape
-import com.example.targetlog.data_classes.BottomMenuContent
+import com.example.targetlog.model.data_classes.BottomMenuContent
 import com.example.targetlog.presentation.ui.theme.GreenLight
 
 

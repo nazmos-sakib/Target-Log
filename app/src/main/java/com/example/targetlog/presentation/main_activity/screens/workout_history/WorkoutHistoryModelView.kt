@@ -3,6 +3,7 @@ package com.example.targetlog.presentation.main_activity.screens.workout_history
 import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.viewModelScope
+import com.example.targetlog.commons.groupSessionsByMonth
 import com.example.targetlog.data.db.room.SessionIdCount
 import com.example.targetlog.data.db.room.Session
 import com.example.targetlog.data.db.room.SessionGroup
@@ -156,12 +157,4 @@ class  WorkoutHistoryModelView  @Inject constructor(
         }
     }
 
-    private fun groupSessionsByMonth(sessions: List<Session>): List<SessionGroup> {
-        val formatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
-        return sessions.groupBy { session ->
-            formatter.format(session.timestamp)
-        }.map { (monthYear, sessionList) ->
-            SessionGroup(monthYear, sessionList)
-        }
-    }
 }

@@ -12,9 +12,16 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import java.util.Date
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class FireStoreServiceImp @Inject constructor() : FireStoreService {
     private val TAG = "FireStoreServiceImp"
@@ -194,7 +201,7 @@ class FireStoreServiceImp @Inject constructor() : FireStoreService {
                             onFailure(exception)
                             //onResult(emptyList())
                         }
-                }else{
+                } else {
                     onFailure(Exception("No friends found"))
                 }
             }
@@ -226,7 +233,11 @@ class FireStoreServiceImp @Inject constructor() : FireStoreService {
                     // Append to existing array
                     documentRef.update("listOfSession", FieldValue.arrayUnion(sessionData))
                         .addOnSuccessListener { onSuccess() }
-                        .addOnFailureListener { onError(it.message ?: "Failed to update session list") }
+                        .addOnFailureListener {
+                            onError(
+                                it.message ?: "Failed to update session list"
+                            )
+                        }
                 } else {
                     // Create new document
                     val newData = mapOf(
@@ -235,7 +246,11 @@ class FireStoreServiceImp @Inject constructor() : FireStoreService {
                     )
                     documentRef.set(newData)
                         .addOnSuccessListener { onSuccess() }
-                        .addOnFailureListener { onError(it.message ?: "Failed to create session document") }
+                        .addOnFailureListener {
+                            onError(
+                                it.message ?: "Failed to create session document"
+                            )
+                        }
                 }
             }
             .addOnFailureListener { onError(it.message ?: "Error accessing session document") }
@@ -297,6 +312,45 @@ class FireStoreServiceImp @Inject constructor() : FireStoreService {
         }
     }
 
+
+    private suspend fun getFriendList(currentUserId: String): List<User> =
+        suspendCoroutine { cont ->
+            friendsListTable
+                .whereEqualTo("userId", currentUserId)
+                .get()
+                .addOnSuccessListener { result ->
+                    val friendsList = result.documents.mapNotNull { document ->
+                        document.toObject(FriendList::class.java)
+                    }
+                    if (friendsList.isNotEmpty()) {
+                        userTable
+                            .whereIn("id", friendsList[0].listOfFriends)
+                            .get()
+                            .addOnSuccessListener { u ->
+                                val users = u.documents.mapNotNull { document ->
+                                    document.toObject(User::class.java)
+                                }
+                                cont.resume(users) // ✅ Resume coroutine with user list
+                            }
+                            .addOnFailureListener { exception ->
+                                cont.resumeWith(Result.failure(exception)) // ✅ Resume with error
+                            }
+                    } else {
+                        cont.resumeWith(Result.failure(Exception("No friends found")))
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    cont.resumeWith(Result.failure(exception))
+                }
+        }
+
+
+    override suspend fun friendsTimeLine(
+        currentUserId: String,
+    ): Flow<List<User>> = flow {
+        val users = getFriendList(currentUserId)
+        emit(users)
+    }.flowOn(Dispatchers.IO)
 
 
 }
